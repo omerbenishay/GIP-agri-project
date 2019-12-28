@@ -6,20 +6,27 @@ from multiprocessing import Pool, cpu_count
 import multiprocessing
 # multiprocessing.set_start_method('spawn', True)
 import time
+import datetime
 import tqdm
 from math import ceil
 
 def cut(args):
+    # Reconstruct arguments
     annotation_path = args.path
     limit = args.limit
-    jobs = cut_jobs(annotation_path, "leaf", limit)
+
+
+    # Launch job
     start = time.time()
-    jobs = list(jobs)
+    jobs = list(cut_jobs(annotation_path, "leaf", limit))
     total_jobs = len(jobs) if limit is None else min(limit, len(jobs))
+
+    # Run cutting tasks asynchronously to exploit multiple CPU cores
     with Pool(cpu_count()) as pool:
         for _ in tqdm.tqdm(pool.imap_unordered(image_from_tuple, jobs), total=total_jobs):
             pass
-    print("took {} seconds".format(time.time() - start))
+    print( "Took {0:.2f} seconds".format(time.time() - start) )
+
 
 def get_category_annotations(annotation_path, category_name, n=None):
     with open(annotation_path) as annotations_file:
