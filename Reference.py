@@ -50,6 +50,10 @@ class HelpReference:
 
         no_alpha = "Do not apply alpha around objects"
 
+        limit = "Maximum number of object files to create. Not specifying this argument will result in cutting all the available objects"
+
+        path = "path to json file in COCO format, with relative image paths"
+
     class InfoReference:
         description = "Prints information about the model saved in the model-info variable"
 

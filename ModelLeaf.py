@@ -38,6 +38,8 @@ def main():
     # parser for cut
     parser_cut = subparsers.add_parser('cut', help=HelpReference.CutReference.description)
     parser_cut.set_defaults(func=cut)
+    parser_cut.add_argument('path', help=HelpReference.CutReference.path)
+    parser_cut.add_argument('-l', '--limit', type=int, help=HelpReference.CutReference.limit)
     parser_cut.add_argument('-n', '--normalize', help=HelpReference.CutReference.normalize)
     parser_cut.add_argument('-b', '--background', choices=['black', 'white', 'original'], help=HelpReference.CutReference.background, default='original')
     parser_cut.add_argument('--no-alpha', help=HelpReference.CutReference.no_alpha, action='store_true')
