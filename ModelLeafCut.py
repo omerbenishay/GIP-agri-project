@@ -4,7 +4,7 @@ import json
 import os 
 from multiprocessing import Pool, cpu_count
 import multiprocessing
-# multiprocessing.set_start_method('spawn', True)
+multiprocessing.set_start_method('spawn', True)
 import time
 import datetime
 import tqdm
@@ -16,6 +16,9 @@ def cut(args):
     limit = args.limit
     output_dir = args.output
     width = args.normalize
+    no_alpha = args.no_alpha
+    background = args.background
+    # todo: no alpha
     
     # Track performance
     start = time.time()
@@ -28,6 +31,8 @@ def cut(args):
         job_pipe.append((image_from_annotation, (leaf_annotation, image_path)))
         if width is not None:
             job_pipe.append((resize_image, (leaf_annotation, width)))
+        if background != "transparent":
+            job_pipe.append((apply_background, (background,)))
         job_pipe.append((save_image, (leaf_annotation, i, output_dir)))
         jobs_for_pool.append(job_pipe)
         
@@ -37,6 +42,8 @@ def cut(args):
     with Pool(cpu_count()) as pool:
         for _ in tqdm.tqdm(pool.imap_unordered(handle_job_pipe, jobs_for_pool), total=total_jobs):
             pass
+
+    # Print performance
     print( "Took {0:.2f} seconds".format(time.time() - start) )
 
 def get_category_annotations(annotation_path, category_name, n=None):
@@ -50,7 +57,11 @@ def get_category_annotations(annotation_path, category_name, n=None):
         for annotation in annotations["annotations"]:
             if n is not None and count == n:
                 break
+            # Discard objects with more than one polygon
             if len(annotation.get("segmentation")) != 1:
+                continue
+            # Discard objects of size 0
+            if annotation["bbox"][2] < 1 or annotation["bbox"][3] < 1:
                 continue
             if annotation.get("category_id") == category_id:
                 count += 1
@@ -62,6 +73,8 @@ def get_image_path(annotation_path, image_id):
         image_path = [image["path"] for image in images if image["id"] == image_id][0]
         return image_path
 
+    
+
 def image_from_tuple(tuple):
     return image_from_annotation(*tuple)
 
@@ -71,7 +84,22 @@ def handle_job_pipe(function_sequence):
     for function, args in function_sequence[1:]:
         image = function(image, *args)
 
+def apply_background(image, background):
+    if image is None:
+        return image
+    if background == "original":
+        return image.convert("RGB")
+
+    color = (255, 255, 255) if background == "white" else (0, 0, 0)
+    background = Image.new("RGB", image.size, color)
+    background.paste(image, mask=image.split()[3])
+
+    return background
+
 def resize_image(image, leaf_annotation, width):
+    if image is None:
+        return image
+
     rgb_image = Image.fromarray(np.asarray(image)[:,:,:3], "RGB")
     mask_image = Image.fromarray(np.asarray(image)[:,:,3], "L")
     ratio = rgb_image.size[0] / rgb_image.size[1]
@@ -83,6 +111,9 @@ def resize_image(image, leaf_annotation, width):
     return rgb_image
 
 def save_image(image, leaf_annotation, suffix, dir_path):
+    if image is None:
+        return image
+
     path = "image_{}.png".format(suffix)
     if dir_path is not None:
         path = os.path.join(dir_path, path)
