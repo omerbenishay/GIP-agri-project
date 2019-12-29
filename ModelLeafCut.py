@@ -14,7 +14,7 @@ def cut(args):
     # Reconstruct arguments
     annotation_path = args.path
     limit = args.limit
-    output_dir = None #args.output
+    output_dir = args.output
     width = args.normalize
     
     # Track performance
@@ -72,7 +72,15 @@ def handle_job_pipe(function_sequence):
         image = function(image, *args)
 
 def resize_image(image, leaf_annotation, width):
-    return image
+    rgb_image = Image.fromarray(np.asarray(image)[:,:,:3], "RGB")
+    mask_image = Image.fromarray(np.asarray(image)[:,:,3], "L")
+    ratio = rgb_image.size[0] / rgb_image.size[1]
+    height = int(rgb_image.size[0] / ratio)
+    rgb_image.thumbnail((width, height), Image.ANTIALIAS)
+    mask_image.thumbnail((width, height), Image.NEAREST)
+    rgb_image.putalpha(mask_image)
+
+    return rgb_image
 
 def save_image(image, leaf_annotation, suffix, dir_path):
     path = "image_{}.png".format(suffix)
@@ -82,6 +90,7 @@ def save_image(image, leaf_annotation, suffix, dir_path):
         image.save(path)
     except Exception as e:
         print("error occured while processing annotation id {}".format(leaf_annotation["id"]))
+        print(e)
         return None
     
 
