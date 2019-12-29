@@ -14,19 +14,30 @@ def cut(args):
     # Reconstruct arguments
     annotation_path = args.path
     limit = args.limit
-
-
-    # Launch job
+    output_dir = None #args.output
+    width = args.normalize
+    
+    # Track performance
     start = time.time()
-    jobs = list(cut_jobs(annotation_path, "leaf", limit))
-    total_jobs = len(jobs) if limit is None else min(limit, len(jobs))
 
+    # Create cut sequence
+    jobs = cut_jobs(annotation_path, "leaf", limit)
+    jobs_for_pool = []
+    for leaf_annotation, image_path, i in jobs:
+        job_pipe = []
+        job_pipe.append((image_from_annotation, (leaf_annotation, image_path)))
+        if width is not None:
+            job_pipe.append((resize_image, (leaf_annotation, width)))
+        job_pipe.append((save_image, (leaf_annotation, i, output_dir)))
+        jobs_for_pool.append(job_pipe)
+        
+    total_jobs = len(jobs_for_pool) if limit is None else min(limit, len(jobs_for_pool))
+    
     # Run cutting tasks asynchronously to exploit multiple CPU cores
     with Pool(cpu_count()) as pool:
-        for _ in tqdm.tqdm(pool.imap_unordered(image_from_tuple, jobs), total=total_jobs):
+        for _ in tqdm.tqdm(pool.imap_unordered(handle_job_pipe, jobs_for_pool), total=total_jobs):
             pass
     print( "Took {0:.2f} seconds".format(time.time() - start) )
-
 
 def get_category_annotations(annotation_path, category_name, n=None):
     with open(annotation_path) as annotations_file:
@@ -54,7 +65,27 @@ def get_image_path(annotation_path, image_id):
 def image_from_tuple(tuple):
     return image_from_annotation(*tuple)
 
-def image_from_annotation(leaf_annotation, image_path, suffix, save=True):
+def handle_job_pipe(function_sequence):
+    head_function, args = function_sequence[0]
+    image = head_function(*args)
+    for function, args in function_sequence[1:]:
+        image = function(image, *args)
+
+def resize_image(image, leaf_annotation, width):
+    return image
+
+def save_image(image, leaf_annotation, suffix, dir_path):
+    path = "image_{}.png".format(suffix)
+    if dir_path is not None:
+        path = os.path.join(dir_path, path)
+    try:
+        image.save(path)
+    except Exception as e:
+        print("error occured while processing annotation id {}".format(leaf_annotation["id"]))
+        return None
+    
+
+def image_from_annotation(leaf_annotation, image_path):
     
     image = None
     try:
@@ -97,13 +128,6 @@ def image_from_annotation(leaf_annotation, image_path, suffix, save=True):
     except Exception as e:
         print("error occured while creating image from annotation id {}".format(leaf_annotation["id"]))
         return None
-
-    if save:
-        try:
-            new_image.save("image_{}.png".format(suffix))
-        except Exception as e:
-            print("error occured while processing annotation id {}".format(leaf_annotation["id"]))
-            return None
 
     return new_image
 
