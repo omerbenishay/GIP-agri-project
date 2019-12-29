@@ -46,9 +46,7 @@ class HelpReference:
 
         normalize = "Normalize the generated pictures to the specified width-size. By default pictures are not normalized, every leaf stays at its original size"
 
-        background = "Specify the RGB background of the leaf, regardless of the alpha channel value [default: original]"
-
-        no_alpha = "Do not apply alpha around objects"
+        background = "Specify the background of the leaf, transparent means keep the alpha channel [default: transparent]"
 
         limit = "Maximum number of object files to create. Not specifying this argument will result in cutting all the available objects"
 

@@ -42,8 +42,7 @@ def main():
     parser_cut.add_argument('-o', '--output', help=HelpReference.CutReference.output)
     parser_cut.add_argument('-l', '--limit', type=int, help=HelpReference.CutReference.limit)
     parser_cut.add_argument('-n', '--normalize', type=int, help=HelpReference.CutReference.normalize)
-    parser_cut.add_argument('-b', '--background', choices=['black', 'white', 'original'], help=HelpReference.CutReference.background, default='original')
-    parser_cut.add_argument('--no-alpha', help=HelpReference.CutReference.no_alpha, action='store_true')
+    parser_cut.add_argument('-b', '--background', choices=['black', 'white', 'original', 'transparent'], help=HelpReference.CutReference.background, default='transparent')
 
     # parser for info
     parser_info = subparsers.add_parser('info', help=HelpReference.InfoReference.description)
