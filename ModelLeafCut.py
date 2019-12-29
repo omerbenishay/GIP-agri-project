@@ -16,9 +16,7 @@ def cut(args):
     limit = args.limit
     output_dir = args.output
     width = args.normalize
-    no_alpha = args.no_alpha
     background = args.background
-    # todo: no alpha
     
     # Track performance
     start = time.time()
@@ -178,7 +176,6 @@ def cut_jobs(annotation_path, category='leaf', n=None):
         image_relative_path = get_image_path(annotation_path, leaf_annotation["image_id"])
         image_path = os.path.join(dir_path, image_relative_path)
         yield (leaf_annotation, image_path, i)
-
 
 if __name__ == "__main__":
     file_path = "/home/nomios/Documents/Projects/deep/cucumber/dataset/leaves/train/annotations.json"
