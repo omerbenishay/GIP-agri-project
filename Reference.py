@@ -54,6 +54,8 @@ class HelpReference:
 
         path = "path to json file in COCO format, with relative image paths"
 
+        output = "Set output directory [default: current]"
+
     class InfoReference:
         description = "Prints information about the model saved in the model-info variable"
 
