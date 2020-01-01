@@ -1,0 +1,8 @@
+{
+    "BananaDataset": {
+        "folder_objects": "path",
+        "folder_bgs": "path", 
+        "min_leaf": 100, 
+        "max_leaf": 200
+    }
+}

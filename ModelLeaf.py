@@ -22,6 +22,7 @@ def main():
     parser_train.add_argument('-t', '--test-set', help=HelpReference.TrainReference.test_set)
     parser_train.add_argument('-c', '--config', help=HelpReference.TrainReference.config)
     parser_train.add_argument('-s', '--synthetic', choices=['random', 'grouped'], help=HelpReference.TrainReference.synthetic, default='grouped')
+    parser_train.add_argument('-dc', '--dataset-class', help=HelpReference.TrainReference.dataset_class, default='BananaDataset')
     parser_train.add_argument('--leaf-size-min', type=int, help=HelpReference.TrainReference.leaf_size_min)
     parser_train.add_argument('--leaf-size-max', type=int, help=HelpReference.TrainReference.leaf_size_max)
     parser_train.add_argument('--leaf-number-min', type=int, help=HelpReference.TrainReference.leaf_number_min)
