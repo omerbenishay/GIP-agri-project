@@ -22,6 +22,19 @@ class LeafsDataset(utils.Dataset):
         if self.folder_bgs is not None:
             self.init_bgs()    
 
+    @classmethod
+    def from_config(cls, config_dict, width, height):
+        folder_objects = config_dict.get("folder_objects")
+        folder_bgs = config_dict.get("folder_bgs")
+        min_leaf = config_dict.get("min_leaf")
+        max_leaf = config_dict.get("max_leaf")
+        number_train_images = config_dict.get("number_train_images")
+
+        leaf_dataset = cls(folder_objects, folder_bgs, min_leaf, max_leaf)
+        leaf_dataset.load_shapes(number_train_images, height, width)
+        leaf_dataset.prepare()
+
+        return leaf_dataset
 
     def init_objects(self):
         for root, _, files in os.walk(self.folder_objects):
@@ -30,7 +43,7 @@ class LeafsDataset(utils.Dataset):
                 temp = img.copy()
                 img.close()
                 self.img2.append(temp)
-        print("folder: " + folder_objects + " initialized")
+        print("folder: " + self.folder_objects + " initialized")
 
     def init_bgs(self):
         for root, _, files in os.walk(self.folder_bgs):
@@ -38,7 +51,7 @@ class LeafsDataset(utils.Dataset):
                 self.bg.append(Image.open(os.path.join(root, filename)))
         _, _, files_bgs = next(os.walk(self.folder_bgs))
         self.number_of_bgs = len(files_bgs)
-        print("folder: " + folder_bgs + " initialized")
+        print("folder: " + self.folder_bgs + " initialized")
 
         _, _, files_objects = next(os.walk(self.folder_objects))
         self.number_of_leafs = len(files_objects)

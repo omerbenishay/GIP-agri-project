@@ -32,7 +32,9 @@ class HelpReference:
 
         preview_only = "generate samples of training set without training the model"
 
-        dataset_class = "dataset class to use"
+        dataset_class = "dataset module and class name to use [eg: 'BananaDataset']"
+
+        dataset_config = "dataset configuration file path"
     class InferReference:
         description = "Loads a dataset, loads a model, runs inference on all the pictures located in a directory. Outputs a set of pictures with a translucent mask on every detected leaf. Additionally, a json annotation file is generated."
 
