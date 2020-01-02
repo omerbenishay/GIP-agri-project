@@ -2,6 +2,7 @@
 import math
 import cv2
 import numpy as np
+from PIL import Image
  
 def add_image(img1, img2, x_center, y_center, x_scale, y_scale, angle):
     img2 = img2.resize((int(x_scale * img2.size[0]), int(y_scale * img2.size[1])), resample=Image.BICUBIC) # Image.ANTIALIAS
@@ -25,6 +26,14 @@ def image_to_mask(image):
     #se = scipy.ndimage.generate_binary_structure(2, 1)
     #mask = scipy.ndimage.binary_erosion(mask, structure=se, iterations = 2)
     return mask
+
+def mask_to_image(mask):
+    x, y, z = mask.shape
+    image = np.zeros((x, y))
+    for i in range(0, z):
+        image += mask[:, :, i] * (i + 1)
+    print(z)
+    return image
 
 def add_image_without_transparency(img1, img2, x_center, y_center, x_scale, y_scale, angle):
     img2 = cv2.resize(img2, None, fx=x_scale, fy=y_scale, interpolation=cv2.INTER_CUBIC)
