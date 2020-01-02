@@ -78,6 +78,11 @@ def save_samples(dataset, n=10, path="./"):
         Image.fromarray(mask_to_image(mask)).save(mask_path)
 
 def load_coco_weights(model, dir_path="models"):
+    """
+    :param model:       MaskRCNN model instance to load model to
+    :param dir_path:    Directory to check for existing coco pretrain file
+                        or to download it to
+    """
     pretrain_file_path = os.path.join(dir_path, "mask_rcnn_coco.h5")
     if not os.path.exists(pretrain_file_path):
         os.makedirs(os.path.dirname(pretrain_file_path), exist_ok=True)

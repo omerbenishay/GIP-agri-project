@@ -8,12 +8,19 @@ import numpy as np
 from DatasetUtils import *
 
 class BananaDataset(utils.Dataset):
-    def __init__(self, folder_objects=None, folder_bgs=None, min_leaf=None, max_leaf=None):
+    def __init__(self, folder_objects=None, folder_bgs=None, 
+    min_leaf=100, max_leaf=200, image_size=512,
+    min_scale=0.5, max_scale=1.5, min_aspect_ratio=1.2):
         utils.Dataset.__init__(self)
         self.folder_objects = folder_objects
         self.folder_bgs = folder_bgs
         self.min_leaf = min_leaf
         self.max_leaf = max_leaf
+        self.image_size = image_size
+        self.min_scale = min_scale
+        self.max_scale = max_scale
+        self.min_aspect_ratio = min_aspect_ratio
+        self.max_aspect_ratio = 1.0 / min_aspect_ratio
         self.img2 = []
         self.bg = []
 
@@ -28,9 +35,11 @@ class BananaDataset(utils.Dataset):
         folder_bgs = config_dict.get("folder_bgs")
         min_leaf = config_dict.get("min_leaf")
         max_leaf = config_dict.get("max_leaf")
+        min_scale = config_dict.get("min_scale")
+        max_scale = config_dict.get("max_scale")
         number_train_images = config_dict.get("number_train_images")
-
-        leaf_dataset = cls(folder_objects, folder_bgs, min_leaf, max_leaf)
+        image_size = config_dict.get("image_size")
+        leaf_dataset = cls(folder_objects, folder_bgs, min_leaf, max_leaf, image_size, min_scale, max_scale)
         leaf_dataset.load_shapes(number_train_images, height, width)
         leaf_dataset.prepare()
 
@@ -89,7 +98,7 @@ class BananaDataset(utils.Dataset):
             shape, location, scale, angle, index = self.random_shape_centered(height, width, x_location, y_location, prev_angle)
             prev_angle = angle
 
-            y, x, channels = np.asarray(self.img2[index]).shape
+            y, x, _ = np.asarray(self.img2[index]).shape
             shapes.append((shape, location, scale, angle, index))
             boxes.append([location[1], location[0], location[1] + y, location[0] + x])
 
@@ -106,8 +115,8 @@ class BananaDataset(utils.Dataset):
 
         # x_scale = random.uniform(MIN_SCALE, MAX_SCALE) * random.uniform(MIN_ASPECT_RATIO, MAX_ASPECT_RATIO)
         # y_scale = random.uniform(MIN_SCALE, MAX_SCALE)
-        x_scale = random.uniform(MIN_SCALE, MAX_SCALE)
-        y_scale = x_scale * random.uniform(MIN_ASPECT_RATIO, MAX_ASPECT_RATIO)
+        x_scale = random.uniform(self.min_scale, self.max_scale)
+        y_scale = x_scale * random.uniform(self.min_aspect_ratio, self.max_aspect_ratio)
 
         angle = random.randint(0, 360)
         index = random.randint(0, self.number_of_leafs - 1)
@@ -120,8 +129,8 @@ class BananaDataset(utils.Dataset):
 
         # x_scale = random.uniform(MIN_SCALE, MAX_SCALE) * random.uniform(MIN_ASPECT_RATIO, MAX_ASPECT_RATIO)
         # y_scale = random.uniform(MIN_SCALE, MAX_SCALE)
-        x_scale = random.uniform(MIN_SCALE, MAX_SCALE)
-        y_scale = x_scale * random.uniform(MIN_ASPECT_RATIO, MAX_ASPECT_RATIO)
+        x_scale = random.uniform(self.min_scale, self.max_scale)
+        y_scale = x_scale * random.uniform(self.min_aspect_ratio, self.max_aspect_ratio)
 
         angle = (prev_angle + 70 + random.randint(-20, 20)) % 360   # (prev_angle + 120 + random.randint(-10, 10))
         #angle = random.randint(0, 360)
@@ -141,10 +150,10 @@ class BananaDataset(utils.Dataset):
 
         y_max, x_max, channels = np.asarray(self.bg[index]).shape
 
-        x = random.randint(0, x_max - TRAIN_IMAGE_SIZE)  # AZ 1024   512
-        y = random.randint(0, y_max - TRAIN_IMAGE_SIZE)  # AZ 1024   512
+        x = random.randint(0, x_max - self.image_size)  # AZ 1024   512
+        y = random.randint(0, y_max - self.image_size)  # AZ 1024   512
 
-        area = (x, y, x + TRAIN_IMAGE_SIZE, y + TRAIN_IMAGE_SIZE)  # AZ 1024  512
+        area = (x, y, x + self.image_size, y + self.image_size)  # AZ 1024  512
         image = self.bg[index].crop(area)
 
         for shape, location, scale, angle, index in info['shapes']:

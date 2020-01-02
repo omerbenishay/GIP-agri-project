@@ -4,13 +4,19 @@
             "folder_objects": "path",
             "folder_bgs": "path", 
             "min_leaf": 100, 
-            "max_leaf": 200
+            "max_leaf": 200,
+            "min_scale": 0.5,
+            "max_scale": 1.5,
+            "image_size": 512
         },
         "valid":{
             "folder_objects": "path",
             "folder_bgs": "path", 
             "min_leaf": 100, 
-            "max_leaf": 200
+            "max_leaf": 200,
+            "min_scale": 0.5,
+            "max_scale": 1.5,
+            "image_size": 512
         }     
     }
 }
