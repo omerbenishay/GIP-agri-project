@@ -37,10 +37,10 @@ class BananaDataset(utils.Dataset):
         max_leaf = config_dict.get("max_leaf")
         min_scale = config_dict.get("min_scale")
         max_scale = config_dict.get("max_scale")
-        number_train_images = config_dict.get("number_train_images")
+        number_of_images = config_dict.get("number_of_images")
         image_size = config_dict.get("image_size")
         leaf_dataset = cls(folder_objects, folder_bgs, min_leaf, max_leaf, image_size, min_scale, max_scale)
-        leaf_dataset.load_shapes(number_train_images, height, width)
+        leaf_dataset.load_shapes(number_of_images, height, width)
         leaf_dataset.prepare()
 
         return leaf_dataset

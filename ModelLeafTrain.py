@@ -23,7 +23,7 @@ def train(args):
     pretrain = args.pretrain
 
     # Assemble output directories
-    train_output_dir = os.path.join(output, datetime.now())
+    train_output_dir = os.path.join(output, datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
     model_output_dir = os.path.join(train_output_dir, "model")
     samples_output_dir = os.path.join(train_output_dir, "samples")
 
@@ -34,8 +34,9 @@ def train(args):
         with open(dataset_config_path) as dataset_config_file:
             dataset_config = json.load(dataset_config_file).get(dataset_class_name)
 
-    dataset_train = DatasetClass.from_config(dataset_config["train"])
-    dataset_valid = DatasetClass.from_config(dataset_config["valid"])
+    train_config = ModelLeafConfig()
+    dataset_train = DatasetClass.from_config(dataset_config["train"], train_config.IMAGE_SHAPE[0], train_config.IMAGE_SHAPE[1])
+    dataset_valid = DatasetClass.from_config(dataset_config["valid"], train_config.IMAGE_SHAPE[0], train_config.IMAGE_SHAPE[1])
 
     # Save train samples
     save_samples(dataset_train, samples_number, path=samples_output_dir)
@@ -44,7 +45,7 @@ def train(args):
         return # finish here
     
     # Create model
-    model = MaskRCNN(mode="training", config=ModelLeafConfig, model_dir=model_output_dir)
+    model = MaskRCNN(mode="training", config=train_config, model_dir=model_output_dir)
 
     # Start training from COCO or from previously trained model
     if pretrain == "COCO":
@@ -53,7 +54,7 @@ def train(args):
         model.load_weights(pretrain, by_name=True)
 
     # Start train
-    model.train(dataset_train, dataset_valid, learning_rate=ModelLeafConfig.LEARNING_RATE, epochs=epochs, layers=layers)
+    model.train(dataset_train, dataset_valid, learning_rate=train_config.LEARNING_RATE, epochs=epochs, layers=layers)
 
 def apply_class_configuration(class_instance, config_dict):
     for key, value in config_dict.items():
