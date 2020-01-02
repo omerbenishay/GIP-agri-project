@@ -7,7 +7,7 @@ import random
 import numpy as np
 from DatasetUtils import *
 
-class LeafsDataset(utils.Dataset):
+class BananaDataset(utils.Dataset):
     def __init__(self, folder_objects=None, folder_bgs=None, min_leaf=None, max_leaf=None):
         utils.Dataset.__init__(self)
         self.folder_objects = folder_objects

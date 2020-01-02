@@ -35,6 +35,14 @@ class HelpReference:
         dataset_class = "dataset module and class name to use [eg: 'BananaDataset']"
 
         dataset_config = "dataset configuration file path"
+
+        epochs = "number of training epochs"
+
+        steps_per_epoch = "number of training steps to perform per epoch"
+
+        layers = "layers of model to train. Other layers will remain unchanged"
+
+
     class InferReference:
         description = "Loads a dataset, loads a model, runs inference on all the pictures located in a directory. Outputs a set of pictures with a translucent mask on every detected leaf. Additionally, a json annotation file is generated."
 

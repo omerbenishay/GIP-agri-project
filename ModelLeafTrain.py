@@ -1,5 +1,7 @@
 from pydoc import locate
 import json
+from Config import ModelLeafConfig
+from mrcnn.model import MaskRCNN
 
 def train(args):
     # Retrieve arguments
@@ -10,20 +12,8 @@ def train(args):
     preview_only = args.preview_only
     dataset_class = args.dataset_class
     dataset_config_path = args.dataset_config
-
-    """
-    parser_train.add_argument('-o', '--output', help=HelpReference.TrainReference.output, default='./')
-    parser_train.add_argument('-k', '--dataset-keep', type=int, help=HelpReference.TrainReference.dataset_keep, default=0)
-    parser_train.add_argument('-t', '--test-set', help=HelpReference.TrainReference.test_set)
-    parser_train.add_argument('-c', '--config', help=HelpReference.TrainReference.config)
-    parser_train.add_argument('-s', '--synthetic', choices=['random', 'grouped'], help=HelpReference.TrainReference.synthetic, default='grouped')
-    parser_train.add_argument('-dc', '--dataset-class', help=HelpReference.TrainReference.dataset_class, default='BananaDataset')
-    parser_train.add_argument('--leaf-size-min', type=int, help=HelpReference.TrainReference.leaf_size_min)
-    parser_train.add_argument('--leaf-size-max', type=int, help=HelpReference.TrainReference.leaf_size_max)
-    parser_train.add_argument('--leaf-number-min', type=int, help=HelpReference.TrainReference.leaf_number_min)
-    parser_train.add_argument('--leaf-number-max', type=int, help=HelpReference.TrainReference.leaf_number_max)
-    parser_train.add_argument('--preview-only', type=int, help=HelpReference.TrainReference.preview_only)
-    """
+    epochs = args.epochs
+    layers = args.layers
 
     # Create dataset
     DatasetClass = locate(dataset_class + '.' + dataset_class)
@@ -38,8 +28,15 @@ def train(args):
     # todo: save dataset samples
 
     # Create model
-    train_config = 
-    model = 
+    model = MaskRCNN(mode="training", config=ModelLeafConfig, model_dir=output)
+
+    # Start training from
+    # 1. COCO
+    # 2. h5 pretrained
+    # 3. scratch ? probably never
+
+    # Start train
+    model.train(dataset_train, dataset_valid, learning_rate=ModelLeafConfig.LEARNING_RATE, epochs=epochs, layers=layers)
 
 def apply_class_configuration(class_instance, config_dict):
     for key, value in config_dict.items():
