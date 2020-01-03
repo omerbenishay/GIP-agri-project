@@ -130,8 +130,13 @@ dmypy.json
 
 # IDE files
 .vscode/
+.idea/
+.idea/*
 
 # Image files
 *.png
 *.jpeg
-*.jpg
+*.jpgmodels/
+
+# models
+models/

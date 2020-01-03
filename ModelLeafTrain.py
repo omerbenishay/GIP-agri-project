@@ -39,7 +39,8 @@ def train(args):
     dataset_valid = DatasetClass.from_config(dataset_config["valid"], train_config.IMAGE_SHAPE[0], train_config.IMAGE_SHAPE[1])
 
     # Save train samples
-    save_samples(dataset_train, samples_number, path=samples_output_dir)
+    if samples_number != 0:
+        save_samples(dataset_train, samples_number, path=samples_output_dir)
 
     if preview_only:
         return # finish here

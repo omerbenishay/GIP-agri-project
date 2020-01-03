@@ -1,8 +1,8 @@
 {
     "BananaDataset": {
         "train":{
-            "folder_objects": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_leaves",
-            "folder_bgs": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_backgrounds", 
+            "folder_objects": "/home/simonl/datasets/banana/leaves",
+            "folder_bgs": "/home/simonl/datasets/banana/bgs",
             "min_leaf": 100, 
             "max_leaf": 200,
             "min_scale": 0.5,
@@ -11,8 +11,8 @@
             "number_of_images": 200
         },
         "valid":{
-            "folder_objects": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_leaves",
-            "folder_bgs": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_backgrounds", 
+            "folder_objects": "/home/simonl/datasets/banana/leaves",
+            "folder_bgs": "/home/simonl/datasets/banana/bgs",
             "min_leaf": 100, 
             "max_leaf": 200,
             "min_scale": 0.5,
