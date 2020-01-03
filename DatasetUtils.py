@@ -3,7 +3,24 @@ import math
 import cv2
 import numpy as np
 from PIL import Image
- 
+
+def rotate_bound(image, angle):
+    (h, w) = image.shape[:2]
+    (cX, cY) = (w // 2, h // 2)
+
+    M = cv2.getRotationMatrix2D((cX, cY), -angle, 1.0)
+    cos = np.abs(M[0, 0])
+    sin = np.abs(M[0, 1])
+
+    nW = int((h * sin) + (w * cos))
+    nH = int((h * cos) + (w * sin))
+
+    M[0, 2] += (nW / 2) - cX
+    M[1, 2] += (nH / 2) - cY
+
+    return cv2.warpAffine(image, M, (nW, nH))
+
+
 def add_image(img1, img2, x_center, y_center, x_scale, y_scale, angle):
     img2 = img2.resize((int(x_scale * img2.size[0]), int(y_scale * img2.size[1])), resample=Image.BICUBIC) # Image.ANTIALIAS
     img2 = img2.rotate(angle, resample=Image.BICUBIC, expand=True)

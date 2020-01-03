@@ -10,6 +10,7 @@ from DatasetUtils import mask_to_image
 from tqdm import tqdm
 from datetime import datetime
 
+
 def train(args):
     # Retrieve arguments
     output = args.output
@@ -25,6 +26,8 @@ def train(args):
     # Assemble output directories
     train_output_dir = os.path.join(output, datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
     model_output_dir = os.path.join(train_output_dir, "model")
+    if not os.path.exists(model_output_dir):
+        os.makedirs(model_output_dir, exist_ok=True)
     samples_output_dir = os.path.join(train_output_dir, "samples")
 
     # Create dataset
@@ -57,9 +60,11 @@ def train(args):
     # Start train
     model.train(dataset_train, dataset_valid, learning_rate=train_config.LEARNING_RATE, epochs=epochs, layers=layers)
 
+
 def apply_class_configuration(class_instance, config_dict):
     for key, value in config_dict.items():
         setattr(class_instance, key, value)
+
 
 def save_samples(dataset, n=10, path="./"):
     """
@@ -77,7 +82,8 @@ def save_samples(dataset, n=10, path="./"):
         image_path = os.path.join(path, "{}_image.png".format(image_id))
         Image.fromarray(image).save(image_path)
         mask_path = os.path.join(path, "{}_msk.png".format(image_id))
-        Image.fromarray(mask_to_image(mask)).save(mask_path)
+        Image.fromarray(mask_to_image(mask)).convert("RGB").save(mask_path)
+
 
 def load_coco_weights(model, dir_path="models"):
     """
@@ -89,9 +95,6 @@ def load_coco_weights(model, dir_path="models"):
     if not os.path.exists(pretrain_file_path):
         os.makedirs(os.path.dirname(pretrain_file_path), exist_ok=True)
         utils.download_trained_weights(pretrain_file_path)
-    model.load_weights(pretrain_file_path, by_name=True, exclude=[
-        "mrcnn_class_logits", 
-        "mrcnn_bbox_fc", 
-        "mrcnn_bbox", 
-        "mrcnn_mask"])
-        
+
+    model.load_weights(pretrain_file_path, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
+
