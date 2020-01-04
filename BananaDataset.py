@@ -40,6 +40,7 @@ class BananaDataset(utils.Dataset):
         number_of_images = config_dict.get("number_of_images")
         image_size = config_dict.get("image_size")
         leaf_dataset = cls(folder_objects, folder_bgs, min_leaf, max_leaf, image_size, min_scale, max_scale)
+        leaf_dataset.centered_leaves = config_dict.get("centered_leaves")
         leaf_dataset.load_shapes(number_of_images, height, width)
         leaf_dataset.prepare()
 
@@ -94,8 +95,10 @@ class BananaDataset(utils.Dataset):
 
         for _ in range(N):
             # AZ modified
-            #shape, location, scale, angle, index = self.random_shape(height, width)
-            shape, location, scale, angle, index = self.random_shape_centered(height, width, x_location, y_location, prev_angle)
+            if self.centered_leaves:
+                shape, location, scale, angle, index = self.random_shape_centered(height, width, x_location, y_location, prev_angle)
+            else:
+                shape, location, scale, angle, index = self.random_shape(height, width)
             prev_angle = angle
 
             y, x, _ = np.asarray(self.img2[index]).shape

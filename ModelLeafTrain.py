@@ -20,15 +20,23 @@ def train(args):
     dataset_class_name = args.dataset_class
     dataset_config_path = args.dataset_config
     epochs = args.epochs
+    steps_per_epoch = args.steps_per_epoch
     layers = args.layers
     pretrain = args.pretrain
 
+    # Create config class
+    train_config = ModelLeafConfig()
+
+    # Create model
+    if steps_per_epoch > 0:
+        train_config.STEPS_PER_EPOCH = steps_per_epoch
+
+    if not os.path.exists(output):
+        os.makedirs(output, exist_ok=True)
+    model = MaskRCNN(mode="training", config=train_config, model_dir=output)
+
     # Assemble output directories
-    train_output_dir = os.path.join(output, datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
-    model_output_dir = os.path.join(train_output_dir, "model")
-    if not os.path.exists(model_output_dir):
-        os.makedirs(model_output_dir, exist_ok=True)
-    samples_output_dir = os.path.join(train_output_dir, "samples")
+    samples_output_dir = os.path.join(model.log_dir, "samples")
 
     # Create dataset
     dataset_class = locate(dataset_class_name + '.' + dataset_class_name)
@@ -36,8 +44,6 @@ def train(args):
     if dataset_config_path is not None:
         with open(dataset_config_path) as dataset_config_file:
             dataset_config = json.load(dataset_config_file).get(dataset_class_name)
-
-    train_config = ModelLeafConfig()
     dataset_train = dataset_class.from_config(dataset_config["train"], train_config.IMAGE_SHAPE[0], train_config.IMAGE_SHAPE[1])
     dataset_valid = dataset_class.from_config(dataset_config["valid"], train_config.IMAGE_SHAPE[0], train_config.IMAGE_SHAPE[1])
 
@@ -47,9 +53,6 @@ def train(args):
 
     if preview_only:
         return  # finish here
-    
-    # Create model
-    model = MaskRCNN(mode="training", config=train_config, model_dir=model_output_dir)
 
     # Start training from COCO or from previously trained model
     if pretrain == "COCO":

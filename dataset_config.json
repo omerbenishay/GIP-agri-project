@@ -8,7 +8,8 @@
             "min_scale": 0.5,
             "max_scale": 1.5,
             "image_size": 512,
-            "number_of_images": 200
+            "number_of_images": 200,
+            "centered_leaves": false
         },
         "valid":{
             "folder_objects": "/home/simonl/datasets/banana/leaves",
@@ -18,7 +19,8 @@
             "min_scale": 0.5,
             "max_scale": 1.5,
             "image_size": 512,
-            "number_of_images": 50
+            "number_of_images": 50,
+            "centered_leaves": false
         }     
     }
 }
