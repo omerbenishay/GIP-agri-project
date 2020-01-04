@@ -54,6 +54,8 @@ class HelpReference:
 
         contour_only = "Create contour annotation file only"
 
+        path = "path to directory containing images to infer or path to image to infer"
+
     class CutReference:
         description = "Cut single leaf pictures from an annotated dataset"
 
