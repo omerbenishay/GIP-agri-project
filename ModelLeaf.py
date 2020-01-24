@@ -11,8 +11,8 @@ def main():
     parser = argparse.ArgumentParser(description=HelpReference.description, add_help=False)
     parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS, help=HelpReference.help_description)
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
-
     subparsers = parser.add_subparsers()
+
     # parser for train
     parser_train = subparsers.add_parser('train', help=HelpReference.TrainReference.description)
     parser_train.set_defaults(func=train)
@@ -27,11 +27,12 @@ def main():
     parser_train.add_argument('-s', '--steps-per-epoch', type=int, help=HelpReference.TrainReference.steps_per_epoch, default=0)
     parser_train.add_argument('-l', '--layers', choices=['all', 'heads', '3+', '4+', '5+'], help=HelpReference.TrainReference.layers, default='all')
     parser_train.add_argument('-p', '--pretrain', help=HelpReference.TrainReference.pretrain, default="COCO")
+
     # parser for infer
     parser_infer = subparsers.add_parser('infer', help=HelpReference.InferReference.description)
     parser_infer.set_defaults(func=infer)
     parser_infer.add_argument('path', help=HelpReference.InferReference.path)
-    parser_infer.add_argument('-m, --model', help=HelpReference.InferReference.model, default='search')
+    parser_infer.add_argument('-m', '--model', help=HelpReference.InferReference.model, default='./')
     parser_infer.add_argument('-o', '--output', help=HelpReference.InferReference.output, default='outputs')
     parser_infer.add_argument('--pictures-only', help=HelpReference.InferReference.pictures_only, action='store_true')
     parser_infer.add_argument('--contour-only', help=HelpReference.InferReference.contour_only, action='store_true')

@@ -10,6 +10,9 @@ import datetime
 import tqdm
 from math import ceil
 
+COLOR_WHITE = (255, 255, 255)
+COLOR_BLACK = (0, 0, 0)
+
 def cut(args):
     # Reconstruct arguments
     annotation_path = args.path
@@ -88,7 +91,7 @@ def apply_background(image, background):
     if background == "original":
         return image.convert("RGB")
 
-    color = (255, 255, 255) if background == "white" else (0, 0, 0)
+    color = COLOR_WHITE if background == "white" else COLOR_BLACK
     background = Image.new("RGB", image.size, color)
     background.paste(image, mask=image.split()[3])
 
@@ -124,7 +127,6 @@ def save_image(image, leaf_annotation, suffix, dir_path):
     
 
 def image_from_annotation(leaf_annotation, image_path):
-    
     image = None
     try:
         image = Image.open(image_path).convert("RGBA")
