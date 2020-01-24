@@ -50,13 +50,15 @@ class HelpReference:
 
         output = "Set output directory [default: current]"
 
-        pictures_only = "Create only infered pictures with colorful transparent masks"
+        no_pictures = "Create only infered pictures with colorful transparent masks"
 
-        contour_only = "Create contour annotation file only"
+        no_contours = "Create contour annotation file only"
 
         path = "path to directory containing images to infer or path to image to infer"
 
         model = "path to .h5 trained model to infer with"
+
+        no_masks = "do not save mask images"
 
     class CutReference:
         description = "Cut single leaf pictures from an annotated dataset"

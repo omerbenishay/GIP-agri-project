@@ -8,6 +8,10 @@ from tqdm import tqdm
 from mrcnn import visualize
 from skimage import measure
 from matplotlib import cm
+import json
+import re
+import itertools
+
 
 COLOR_MAP = "Blues"
 
@@ -15,10 +19,10 @@ COLOR_MAP = "Blues"
 def infer(args):
     infer_path = args.path
     output = args.output
-    do_pictures = args.pictures_only  # todo: change to negate
-    do_contours = args.contour_only  # todo: change to negate
+    do_pictures = not args.no_pictures
+    do_contours = not args.no_contours
     model_path = args.model
-
+    should_save_masks = not args.no_masks
     # Retrieve images
     images = generate_images(infer_path)
 
@@ -41,14 +45,18 @@ def infer(args):
         image_name = os.path.basename(image_path)
         image = np.array(Image.open(image_path))
         r = model.detect([image])[0]
-        save_masks(r, output_dir, image_name)  # todo: implement
-        # display_top_masks(image, mask, class_ids, class_names, limit=4):
+        if should_save_masks:
+            save_masks(r, output_dir, image_name)
         if do_pictures:
             output_file_path = os.path.join(output_dir, image_name)
             visualize.save_instances(image, r['rois'], r['masks'], r['class_ids'],
-                                     ['BG', 'leaf'], r['scores'], save_to=output_file_path)
+                                     ['BG', 'leaf'], r['scores'], save_to=output_file_path,)
         if do_contours:
-            inference_dict[image_path].append(get_contours(r))
+            inference_dict[image_path] = get_contours(r)
+
+    if do_contours:
+        with open(os.path.join(output_dir, "contours.json"), 'w') as f:
+            f.write(json.dumps(inference_dict, indent=2))
 
 
 def save_masks(r, output_dir, image_name):
@@ -66,11 +74,21 @@ def save_masks(r, output_dir, image_name):
     Image.fromarray(image).save(os.path.join(output_dir, mask_image_name))
 
 
-def get_contours(r, output_dir, image_name):
+def get_beautiful_json_contour(my_dict):
+    output_json = json.dumps(my_dict, indent=2)
+    output_json = re.sub('\[\s*(\d+\.\d*),\s*(.*)\s*\]', r'[\1, \2]', output_json)
+    output_json = re.sub('\[\s*\[\s*([^"]*)\s*\]\s*\]', r'[[\1]]', output_json)
+    return output_json
+
+
+def get_contours(r):
     contours = {}
     for i in range(r['masks'].shape[-1]):
-        mask = r[..., i]
-        contours[str(i)] = list(measure.find_contours(mask, 0.5))
+        mask = r['masks'][..., i]
+        # A mask might have multiple polygons
+        mask_contours = measure.find_contours(mask, 0.5)
+        # reshape in numpy then convert to list
+        contours["leaf_{}".format(i)] = [np.reshape(c, (-1,)).tolist() for c in mask_contours]
 
     return contours
 
