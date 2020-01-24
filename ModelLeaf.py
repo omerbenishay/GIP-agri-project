@@ -18,7 +18,6 @@ def main():
     parser_train.set_defaults(func=train)
     parser_train.add_argument('-o', '--output', help=HelpReference.TrainReference.output, default='models')
     parser_train.add_argument('-t', '--test-set', help=HelpReference.TrainReference.test_set)
-    # parser_train.add_argument('-mc', '--model-config', help=HelpReference.TrainReference.config)
     parser_train.add_argument('-k', '--dataset-keep', type=int, help=HelpReference.TrainReference.dataset_keep, default=0)
     parser_train.add_argument('-d', '--dataset-class', help=HelpReference.TrainReference.dataset_class, default='BananaDataset')
     parser_train.add_argument('-dc', '--dataset-config', help=HelpReference.TrainReference.dataset_config, default='dataset_config.json')
