@@ -56,6 +56,8 @@ class HelpReference:
 
         path = "path to directory containing images to infer or path to image to infer"
 
+        model = "path to .h5 trained model to infer with"
+
     class CutReference:
         description = "Cut single leaf pictures from an annotated dataset"
 
