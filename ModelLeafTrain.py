@@ -8,8 +8,9 @@ from PIL import Image
 import os
 from DatasetUtils import mask_to_image
 from tqdm import tqdm
-from datetime import datetime
+from ModelLeafUtils import get_clean_dict_from_class, add_metadata_dict_to_h5
 
+CONFIG_METADATA_NAME = 'Config'
 
 def train(args):
     # Retrieve arguments
@@ -63,6 +64,9 @@ def train(args):
     # Start train
     model.train(dataset_train, dataset_valid, learning_rate=train_config.LEARNING_RATE, epochs=epochs, layers=layers)
 
+    # Add metadata to model files
+    add_config_to_model(model.log_dir)
+
 
 def apply_class_configuration(class_instance, config_dict):
     for key, value in config_dict.items():
@@ -101,3 +105,11 @@ def load_coco_weights(model, dir_path="models"):
 
     model.load_weights(pretrain_file_path, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
 
+
+def add_config_to_model(model_path):
+    config_dict = get_clean_dict_from_class(ModelLeafConfig)
+    # iterate over .h5 files
+    for _, _, files in os.walk(model_path):
+        for file in files:
+            if file.endswith('.h5'):
+                add_metadata_dict_to_h5(file, CONFIG_METADATA_NAME, config_dict)

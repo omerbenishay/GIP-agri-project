@@ -25,7 +25,7 @@ def prompt_model(path):
 
 def add_metadata_dict_to_h5(filepath, dict_name, dict_content):
     """
-    supports only simple dict of key: value where the values are
+    Supports only simple dict of key: value where the values are
     :param filepath:
     :param dict_name:
     :param dict_content:
@@ -72,3 +72,8 @@ def get_metadata_dict_from_h5(filepath, dict_name):
             metadata_dict[key] = value[0] if len(value) == 1 else value
     return metadata_dict
 
+
+def get_clean_dict_from_class(my_class_name):
+    class_dict = my_class_name.__dict__
+    my_dict = {key: val for key, val in class_dict.items() if not key.startswith('__') and not callable(val)}
+    return my_dict
