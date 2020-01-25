@@ -64,7 +64,7 @@ def train(args):
     # Start train
     model.train(dataset_train, dataset_valid, learning_rate=train_config.LEARNING_RATE, epochs=epochs, layers=layers)
 
-    # Add metadata to model files
+    # Add metadata to model files (.h5)
     add_config_to_model(model.log_dir)
 
 
@@ -112,4 +112,4 @@ def add_config_to_model(model_path):
     for _, _, files in os.walk(model_path):
         for file in files:
             if file.endswith('.h5'):
-                add_metadata_dict_to_h5(file, CONFIG_METADATA_NAME, config_dict)
+                add_metadata_dict_to_h5(os.path.join(model_path, file), CONFIG_METADATA_NAME, config_dict)

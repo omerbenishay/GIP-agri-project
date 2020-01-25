@@ -48,7 +48,7 @@ def main():
 
     # parser for info
     parser_info = subparsers.add_parser('info', help=HelpReference.InfoReference.description)
-    parser_info.add_argument('model_path', help=HelpReference.InfoReference.model_path)
+    parser_info.add_argument('model_path', help=HelpReference.InfoReference.model_path, default='models')
     parser_info.set_defaults(func=info)
 
     args = parser.parse_args()
