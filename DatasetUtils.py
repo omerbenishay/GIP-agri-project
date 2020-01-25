@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
+
 def rotate_bound(image, angle):
     (h, w) = image.shape[:2]
     (cX, cY) = (w // 2, h // 2)

@@ -1,7 +1,6 @@
 import os
 from mrcnn.model import MaskRCNN
 from Config import ModelLeafConfig
-from questionary import select
 from PIL import Image
 import numpy as np
 from tqdm import tqdm
@@ -9,11 +8,10 @@ from mrcnn import visualize
 from skimage import measure
 from matplotlib import cm
 import json
-import re
-import itertools
-
+from ModelLeafUtils import prompt_model
 
 COLOR_MAP = "Blues"
+CONTOUR_FILE_NAME = "contours.json"
 
 
 def infer(args):
@@ -23,6 +21,7 @@ def infer(args):
     do_contours = not args.no_contours
     model_path = args.model
     should_save_masks = not args.no_masks
+
     # Retrieve images
     images = generate_images(infer_path)
 
@@ -50,12 +49,12 @@ def infer(args):
         if do_pictures:
             output_file_path = os.path.join(output_dir, image_name)
             visualize.save_instances(image, r['rois'], r['masks'], r['class_ids'],
-                                     ['BG', 'leaf'], r['scores'], save_to=output_file_path,)
+                                     ['BG', 'leave'], r['scores'], save_to=output_file_path,)
         if do_contours:
             inference_dict[image_path] = get_contours(r)
 
     if do_contours:
-        with open(os.path.join(output_dir, "contours.json"), 'w') as f:
+        with open(os.path.join(output_dir, CONTOUR_FILE_NAME), 'w') as f:
             f.write(json.dumps(inference_dict, indent=2))
 
 
@@ -74,13 +73,6 @@ def save_masks(r, output_dir, image_name):
     Image.fromarray(image).save(os.path.join(output_dir, mask_image_name))
 
 
-def get_beautiful_json_contour(my_dict):
-    output_json = json.dumps(my_dict, indent=2)
-    output_json = re.sub('\[\s*(\d+\.\d*),\s*(.*)\s*\]', r'[\1, \2]', output_json)
-    output_json = re.sub('\[\s*\[\s*([^"]*)\s*\]\s*\]', r'[[\1]]', output_json)
-    return output_json
-
-
 def get_contours(r):
     contours = {}
     for i in range(r['masks'].shape[-1]):
@@ -91,34 +83,6 @@ def get_contours(r):
         contours["leaf_{}".format(i)] = [np.reshape(c, (-1,)).tolist() for c in mask_contours]
 
     return contours
-
-
-def get_contour_from_mask(mask_array):
-    return []
-
-
-def prompt_model(path):
-    """
-    Generate a correct .h5 model path. If the path is a directory, prompts the user for
-    a correct path.
-    This function recursively calls itself until a .h5 file is returned
-    :param path: The specified path
-    :return: the resulting path from prompt
-    """
-    if path.split('.')[-1] == "h5":
-        return path
-    if os.path.isfile(path):
-        return '..'
-
-    choices = os.listdir(path) + ['..']
-    my_question = 'Select the model you want to use for inference'
-    response = None
-    while response is None or response == '..':
-        next_dir = select(my_question, choices).ask()
-        if next_dir == '..':
-            return '..'
-        response = prompt_model(os.path.join(path, next_dir))
-    return response
 
 
 def generate_images(infer_path):
@@ -145,4 +109,4 @@ def get_inference_config(config):
 
 
 if __name__ == "__main__":
-    prompt_model("/home/nomios/Documents/Projects")
+    print(prompt_model("/home/nomios/Documents/Projects"))
