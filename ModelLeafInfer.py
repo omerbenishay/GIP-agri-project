@@ -1,5 +1,4 @@
 import os
-from mrcnn.model import MaskRCNN
 from Config import ModelLeafConfig
 from PIL import Image
 import numpy as np
@@ -15,6 +14,7 @@ CONTOUR_FILE_NAME = "contours.json"
 
 
 def infer(args):
+    from mrcnn.model import MaskRCNN
     infer_path = args.path
     output = args.output
     do_pictures = not args.no_pictures

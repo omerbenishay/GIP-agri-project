@@ -69,7 +69,10 @@ def get_metadata_dict_from_h5(filepath, dict_name):
         for key, value in list(group_attrs.items()):
             if type(value) == bytes:
                 value = value.decode('utf-8')
-            metadata_dict[key] = value[0] if len(value) == 1 else value
+            if hasattr(value, '__len__'):
+                metadata_dict[key] = value[0] if len(value) == 1 else value
+            else:
+                metadata_dict[key] = value
     return metadata_dict
 
 

@@ -1,7 +1,6 @@
 from pydoc import locate
 import json
 from Config import ModelLeafConfig
-from mrcnn.model import MaskRCNN
 from mrcnn import utils
 import numpy as np
 from PIL import Image
@@ -13,6 +12,7 @@ from ModelLeafUtils import get_clean_dict_from_class, add_metadata_dict_to_h5
 CONFIG_METADATA_NAME = 'Config'
 
 def train(args):
+    from mrcnn.model import MaskRCNN
     # Retrieve arguments
     output = args.output
     samples_number = args.dataset_keep
