@@ -41,7 +41,7 @@ class CocoAnnotationAdapter(object):
 
     def _get_image_path(self, image_id):
         images = self.data.get("images")
-        image_path = [image["path"] for image in images if image["id"] == image_id][0]
+        image_path = [image["file_name"] for image in images if image["id"] == image_id][0]
         return image_path
 
     def __next__(self):

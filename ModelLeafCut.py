@@ -133,7 +133,7 @@ def save_image(image, leaf_annotation, suffix, dir_path):
     try:
         image.save(path)
     except Exception as e:
-        print("error occured while processing annotation id {}".format(leaf_annotation["id"]))
+        print("error occured while processing image {}".format(path))
         print(e)
         return None
 
