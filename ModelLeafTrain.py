@@ -11,6 +11,7 @@ from ModelLeafUtils import get_clean_dict_from_class, add_metadata_dict_to_h5
 
 CONFIG_METADATA_NAME = 'Config'
 
+
 def train(args):
     from mrcnn.model import MaskRCNN
     # Retrieve arguments

@@ -73,6 +73,8 @@ class HelpReference:
 
         output = "Set output directory [default: current]"
 
+        adapter = "Type of annotation - specify in order to correctly parse the annotation file"
+
     class InfoReference:
         description = "Prints information about the model saved in the model-info variable"
 
