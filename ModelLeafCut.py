@@ -38,10 +38,10 @@ def cut(args):
     for leaf_annotation, image_path, i in jobs:
         job_pipe = [(image_from_annotation, (leaf_annotation, image_path))]
         if width is not None:
-            job_pipe.append((resize_image, (leaf_annotation, width)))
+            job_pipe.append((resize_image, (width,)))
         if background != "transparent":
             job_pipe.append((apply_background, (background,)))
-        job_pipe.append((save_image, (leaf_annotation, i, output_dir)))
+        job_pipe.append((save_image, (i, output_dir)))
         jobs_for_pool.append(job_pipe)
 
     total_jobs = len(jobs_for_pool) if limit is None else min(limit, len(jobs_for_pool))
@@ -53,35 +53,6 @@ def cut(args):
 
     # Print performance
     print("Took {0:.2f} seconds".format(time.time() - start))
-
-
-# def get_category_annotations(annotation_path, category_name, n=None):
-#     with open(annotation_path) as annotations_file:
-#         annotations = json.load(annotations_file)
-#         # get category id from category name
-#         category_id = [category["id"] for category in annotations["categories"] if category["name"] == category_name][0]
-#         if category_id is None:
-#             return None
-#         count = 0
-#         for annotation in annotations["annotations"]:
-#             if n is not None and count == n:
-#                 break
-#             # Discard objects with more than one polygon
-#             if len(annotation.get("segmentation")) != 1:
-#                 continue
-#             # Discard objects of size 0
-#             if annotation["bbox"][2] < 1 or annotation["bbox"][3] < 1:
-#                 continue
-#             if annotation.get("category_id") == category_id:
-#                 count += 1
-#                 yield annotation
-
-
-# def get_image_path(annotation_path, image_id):
-#     with open(annotation_path) as annotation_file:
-#         images = json.load(annotation_file).get("images")
-#         image_path = [image["path"] for image in images if image["id"] == image_id][0]
-#         return image_path
 
 
 def image_from_tuple(tuple):
@@ -108,7 +79,7 @@ def apply_background(image, background):
     return background
 
 
-def resize_image(image, leaf_annotation, width):
+def resize_image(image, width):
     if image is None:
         return image
 
@@ -123,11 +94,12 @@ def resize_image(image, leaf_annotation, width):
     return rgb_image
 
 
-def save_image(image, leaf_annotation, suffix, dir_path):
+def save_image(image, suffix, dir_path):
     if image is None:
         return image
 
     path = "image_{}.png".format(suffix)
+    os.makedirs(dir_path, exist_ok=True)
     if dir_path is not None:
         path = os.path.join(dir_path, path)
     try:
@@ -181,13 +153,3 @@ def image_from_annotation(leaf_annotation, image_path):
         return None
 
     return new_image
-
-
-# def cut_jobs(annotation_path, category='leaf', n=None):
-#     annotations = get_category_annotations(annotation_path, category, n)
-#     dir_path = os.path.dirname(annotation_path)
-#     for i, leaf_annotation in enumerate(annotations):
-#         image_relative_path = get_image_path(annotation_path, leaf_annotation["image_id"])
-#         image_path = os.path.join(dir_path, image_relative_path)
-#         yield (leaf_annotation, image_path, i)
-
