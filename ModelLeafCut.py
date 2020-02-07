@@ -1,4 +1,5 @@
 from multiprocessing import Pool, cpu_count
+from skimage.transform import rotate
 from PIL import Image, ImageDraw
 from pydoc import locate
 import multiprocessing
@@ -28,6 +29,7 @@ def cut(args):
     background = args.background
     class_name = adapter_class_lut[args.adapter]
     adapter_class = locate(class_name + '.' + class_name)
+    should_rotate = True  # todo: get parameter
 
     # Track performance
     start = time.time()
@@ -41,6 +43,9 @@ def cut(args):
             job_pipe.append((resize_image, (width,)))
         if background != "transparent":
             job_pipe.append((apply_background, (background,)))
+        if should_rotate:
+            job_pipe.append((rotate_image, (jobs.get_point(i),)))
+
         job_pipe.append((save_image, (i, output_dir)))
         jobs_for_pool.append(job_pipe)
 
@@ -153,3 +158,26 @@ def image_from_annotation(leaf_annotation, image_path):
         return None
 
     return new_image
+
+
+def rotate_image(image, points):
+    """
+    :param image:   Image object to rotate
+    :param points:  Points of leaf edges. List of lists
+    :return: rotated image
+    """
+    if points is None or len(points) < 2:
+        return image
+
+    top_x = points[-2][0]
+    top_y = points[-2][1]
+    bottom_x = points[-1][0]
+    bottom_y = points[-1][1]
+
+    delta_x = bottom_x - top_x
+    delta_y = bottom_y - top_y
+
+    angle_to_rotate_clockwise = np.degrees(np.arctan2([delta_x], [delta_y]))[0]
+    rotated_image = image.rotate(angle_to_rotate_clockwise, expand=True)
+
+    return rotated_image
