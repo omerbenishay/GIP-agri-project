@@ -29,7 +29,7 @@ def cut(args):
     background = args.background
     class_name = adapter_class_lut[args.adapter]
     adapter_class = locate(class_name + '.' + class_name)
-    should_rotate = True  # todo: get parameter
+    should_rotate = args.rotate
 
     # Track performance
     start = time.time()

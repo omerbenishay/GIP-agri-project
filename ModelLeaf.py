@@ -46,7 +46,7 @@ def main():
     parser_cut.add_argument('-n', '--normalize', type=int, help=HelpReference.CutReference.normalize)
     parser_cut.add_argument('-b', '--background', choices=['black', 'white', 'original', 'transparent'], help=HelpReference.CutReference.background, default='transparent')
     parser_cut.add_argument('-a', '--adapter', choices=['banana', 'cucumber', 'maize'], help=HelpReference.CutReference.adapter, default='cucumber')
-
+    parser_cut.add_argument('-r', '--rotate', help=HelpReference.CutReference.rotate, action='store_true')
     # parser for info
     parser_info = subparsers.add_parser('info', help=HelpReference.InfoReference.description)
     parser_info.add_argument('model_path', help=HelpReference.InfoReference.model_path, default='models')

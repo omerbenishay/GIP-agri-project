@@ -7,6 +7,7 @@ import random
 import numpy as np
 from DatasetUtils import *
 
+
 class BananaDataset(utils.Dataset):
     def __init__(self, folder_objects=None, folder_bgs=None, 
     min_leaf=100, max_leaf=200, image_size=512,
@@ -65,6 +66,7 @@ class BananaDataset(utils.Dataset):
 
         _, _, files_objects = next(os.walk(self.folder_objects))
         self.number_of_leafs = len(files_objects)
+    
     def load_shapes(self, count, height, width):
         # Add classes
         self.add_class("leaves", 1, "leaf")
@@ -111,13 +113,9 @@ class BananaDataset(utils.Dataset):
 
     def random_shape(self, height, width):
         shape = random.choice(["leaf"])
-        #x_location = random.randint(0, width)
-        #y_location = random.randint(0, height)
         x_location = random.randint(math.floor(0.25*width), math.floor(0.75*width))  # AZ get away from image borders
         y_location = random.randint(math.floor(0.25*height), math.floor(0.75*height))
 
-        # x_scale = random.uniform(MIN_SCALE, MAX_SCALE) * random.uniform(MIN_ASPECT_RATIO, MAX_ASPECT_RATIO)
-        # y_scale = random.uniform(MIN_SCALE, MAX_SCALE)
         x_scale = random.uniform(self.min_scale, self.max_scale)
         y_scale = x_scale * random.uniform(self.min_aspect_ratio, self.max_aspect_ratio)
 
@@ -126,12 +124,9 @@ class BananaDataset(utils.Dataset):
 
         return shape, (x_location, y_location), (x_scale, y_scale), angle, index
 
-
     def random_shape_centered(self, height, width, x_loc, y_loc, prev_angle):
         shape = random.choice(["leaf"])
 
-        # x_scale = random.uniform(MIN_SCALE, MAX_SCALE) * random.uniform(MIN_ASPECT_RATIO, MAX_ASPECT_RATIO)
-        # y_scale = random.uniform(MIN_SCALE, MAX_SCALE)
         x_scale = random.uniform(self.min_scale, self.max_scale)
         y_scale = x_scale * random.uniform(self.min_aspect_ratio, self.max_aspect_ratio)
 
@@ -144,7 +139,6 @@ class BananaDataset(utils.Dataset):
         index = random.randint(0, self.number_of_leafs - 1)
 
         return shape, (x_location, y_location), (x_scale, y_scale), angle, index
-
 
     def load_image(self, image_id):
         info = self.image_info[image_id]

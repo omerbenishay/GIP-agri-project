@@ -6,11 +6,21 @@ import os
 class BananaAnnotationAdapter(object):
     IMAGE_FORMATS = ['jpg', 'jpeg', 'png', 'bmp']
 
-    def __init__(self, file_path, n=None):
-        with open(file_path, 'r') as f:
-            self.data = json.load(f)
+    def __init__(self, annotation_path, n=None):
+
+        annotation_file_paths = [annotation_path]
+        self.dir_path = os.path.dirname(annotation_path)
+
+        if os.path.isdir(annotation_path):
+            annotation_file_paths = [os.path.join(annotation_path, file_name) for file_name in
+                                     os.listdir(annotation_path) if file_name.endswith(".json")]
+            self.dir_path = annotation_path
+
+        self.data = {}
+        for file_path in annotation_file_paths:
+            with open(file_path, 'r') as f:
+                self.data.update(json.load(f))
         self.n = n
-        self.dir_path = os.path.dirname(file_path)
         self.generator = self._cut_jobs()
         self.annotations = {}
         self._annotation_generate()
@@ -42,10 +52,10 @@ class BananaAnnotationAdapter(object):
 
     def _annotation_generate(self):
         for image_key, annotations_array in self.data.items():
-            last_polygon_id = None
-            for annotation_data in annotations_array:
-                _id = annotation_data["_id"]
 
+            last_polygon_id = None
+            for annotation_data in reversed(annotations_array[1:]):
+                _id = annotation_data["_id"]
                 if annotation_data["annotation_type"] == "polygon":
                     self.annotations[_id] = {}
                     # Flatten the coordinates of the polygon to one array
@@ -56,6 +66,8 @@ class BananaAnnotationAdapter(object):
                     last_polygon_id = _id
 
                 if annotation_data["annotation_type"] == "point":
+                    if last_polygon_id is None:
+                        continue
                     if self.annotations[last_polygon_id].get("point", None) is None:
                         self.annotations[last_polygon_id]["point"] = []
 

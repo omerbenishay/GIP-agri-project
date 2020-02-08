@@ -75,6 +75,8 @@ class HelpReference:
 
         adapter = "Type of annotation - specify in order to correctly parse the annotation file"
 
+        rotate = "Rotate output files to match 2 points from annotation"
+
     class InfoReference:
         description = "Prints information about the model saved in the model-info variable"
 
