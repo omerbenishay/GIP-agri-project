@@ -20,7 +20,7 @@ def train(args):
     # test_set = args.test_set
     preview_only = args.preview_only
     dataset_class_name = args.dataset_class
-    dataset_config_path = args.dataset_config
+    dataset_config_path = args.dataset_config_file
     epochs = args.epochs
     steps_per_epoch = args.steps_per_epoch
     layers = args.layers

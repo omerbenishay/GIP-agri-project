@@ -16,11 +16,11 @@ def main():
     # parser for train
     parser_train = subparsers.add_parser('train', help=HelpReference.TrainReference.description)
     parser_train.set_defaults(func=train)
+    parser_train.add_argument('dataset-config-file', help=HelpReference.TrainReference.dataset_config, default='dataset_config.json')
     parser_train.add_argument('-o', '--output', help=HelpReference.TrainReference.output, default='models')
     parser_train.add_argument('-t', '--test-set', help=HelpReference.TrainReference.test_set)
     parser_train.add_argument('-k', '--dataset-keep', type=int, help=HelpReference.TrainReference.dataset_keep, default=0)
     parser_train.add_argument('-d', '--dataset-class', help=HelpReference.TrainReference.dataset_class, default='BananaDataset')
-    parser_train.add_argument('-dc', '--dataset-config', help=HelpReference.TrainReference.dataset_config, default='dataset_config.json')
     parser_train.add_argument('--preview-only', help=HelpReference.TrainReference.preview_only, action='store_true')
     parser_train.add_argument('-e', '--epochs', type=int, help=HelpReference.TrainReference.epochs, default=10)
     parser_train.add_argument('-s', '--steps-per-epoch', type=int, help=HelpReference.TrainReference.steps_per_epoch, default=0)
