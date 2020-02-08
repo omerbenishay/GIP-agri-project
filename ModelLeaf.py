@@ -16,7 +16,7 @@ def main():
     # parser for train
     parser_train = subparsers.add_parser('train', help=HelpReference.TrainReference.description)
     parser_train.set_defaults(func=train)
-    parser_train.add_argument('dataset-config-file', help=HelpReference.TrainReference.dataset_config)
+    parser_train.add_argument('dataset_config_file', metavar='dataset-config-file', help=HelpReference.TrainReference.dataset_config)
     parser_train.add_argument('-o', '--output', help=HelpReference.TrainReference.output, default='models')
     parser_train.add_argument('-t', '--test-set', help=HelpReference.TrainReference.test_set)
     parser_train.add_argument('-k', '--dataset-keep', type=int, help=HelpReference.TrainReference.dataset_keep, default=0)
