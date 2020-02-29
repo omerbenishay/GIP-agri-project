@@ -20,7 +20,7 @@
             "max_scale": 1.5,
             "image_size": 512,
             "number_of_images": 50,
-            "centered_leaves": false
+            "centered_leaves": true
         }     
     }
 }
