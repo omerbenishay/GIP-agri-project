@@ -1,0 +1,26 @@
+{
+    "BananaDataset": {
+        "train":{
+            "folder_objects": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_leaves",
+            "folder_bgs": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_backgrounds",
+            "min_leaf": 100, 
+            "max_leaf": 200,
+            "min_scale": 0.5,
+            "max_scale": 1.5,
+            "image_size": 512,
+            "number_of_images": 200,
+            "centered_leaves": false
+        },
+        "valid":{
+            "folder_objects": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_leaves",
+            "folder_bgs": "/home/nomios/Documents/Projects/model-cmd/LeafSegmentor2/train_backgrounds",
+            "min_leaf": 100, 
+            "max_leaf": 200,
+            "min_scale": 0.5,
+            "max_scale": 1.5,
+            "image_size": 512,
+            "number_of_images": 50,
+            "centered_leaves": true
+        }     
+    }
+}
