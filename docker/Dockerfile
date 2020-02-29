@@ -8,7 +8,11 @@ COPY environment.yml /.
 RUN apt-get update && apt-get install -y \
 	wget \
 	vim \
-	bzip2
+	bzip2\
+    libglib2.0-0\
+    libsm6\
+    libxext6\
+    libxrender-dev
 
 # Install Miniconda
 RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda.sh && \
@@ -21,7 +25,6 @@ ENV PATH /opt/conda/bin:$PATH
 RUN conda env create -n model-env --file=environment.yml
 RUN conda init bash
 RUN . ~/.bashrc
-RUN conda activate model-env
 
 ## Jupyter
 #EXPOSE 8888
@@ -31,3 +34,4 @@ RUN conda activate model-env
 #ENV PATH "/home/app/.local/bin:$PATH"
 #CMD jupyter notebook --port=8888 --ip=0.0.0.0
 
+# docker run -it --runtime=nvidia -v .:/workspace nomios/leafsegmentor /bin/bash
