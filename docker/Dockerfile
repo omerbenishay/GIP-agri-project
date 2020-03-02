@@ -19,12 +19,12 @@ RUN apt-get update && apt-get install -y \
 RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda.sh && \
 	/bin/bash Miniconda.sh -b -p /opt/conda && \
 	rm Miniconda.sh
-RUN conda update -n base -c defaults conda
 
 ENV TMPDIR=/var/tmp
 ENV PATH /opt/conda/bin:$PATH
 
 #Create conda environment
+RUN conda update -n base -c defaults conda
 RUN conda env create -f environment.yml
 RUN conda init bash
 RUN echo "conda activate model-env" > ~/.bashrc
