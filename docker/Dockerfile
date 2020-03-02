@@ -20,6 +20,7 @@ RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 	/bin/bash Miniconda.sh -b -p /opt/conda && \
 	rm Miniconda.sh
 
+ENV TMPDIR=/var/tmp
 ENV PATH /opt/conda/bin:$PATH
 
 #Install ANACONDA Environment
