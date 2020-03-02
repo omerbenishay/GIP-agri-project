@@ -27,11 +27,11 @@ ENV PATH /opt/conda/bin:$PATH
 RUN conda update -n base -c defaults conda
 RUN conda env create -f environment.yml
 RUN conda init bash
-RUN echo "conda activate model-env" > ~/.bashrc
+RUN echo conda activate model-env > ~/.bashrc
 
 ## Jupyter
 EXPOSE 8888
 ## Tensorboard
 EXPOSE 6006
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "conda run -n model-env /entrypoint.sh" ]
