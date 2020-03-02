@@ -76,7 +76,7 @@ model-leaf train [-o <path> | --output=<path>] [-k <value> | --dataset-keep=<val
 
 [-t <path> | --test-set=<path>] [-c <configfile> | --config=<configfile>] 
 
-[--preview-only] <datasetpath> <bg-path>
+[--preview-only] <datasetconfigpath>
 
 
 ## Notes
