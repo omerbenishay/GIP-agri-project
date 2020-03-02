@@ -25,7 +25,7 @@ ENV PATH /opt/conda/bin:$PATH
 #Install ANACONDA Environment
 RUN conda env create -f environment.yml
 RUN conda init bash
-RUN . ~/.bashrc
+RUN echo "conda activate model-env" > ~/.bashrc
 
 ## Jupyter
 EXPOSE 8888
