@@ -27,7 +27,8 @@ ENV PATH /opt/conda/bin:$PATH
 RUN conda update -n base -c defaults conda
 RUN conda env create -f environment.yml
 RUN conda init bash
-RUN echo "conda activate model-env" > ~/.bashrc
+RUN echo "conda activate model-env" >> ~/.bashrc
+RUN echo "cd /workspace" >> ~/.bashrc 
 
 ## Jupyter
 EXPOSE 8888
