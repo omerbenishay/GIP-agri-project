@@ -68,7 +68,8 @@ def infer(args):
 
         if compare_to_gt:
             IoU_dict[image_path] = _calculate_IoU(image_name, r['masks'], gt_dir)
-
+            total_score = sum(IoU_dict.values()) / len(IoU_dict)
+            print("average IoU scores: " + str(total_score))
 
     if do_contours:
         with open(os.path.join(output_dir, CONTOUR_FILE_NAME), 'w') as f:
