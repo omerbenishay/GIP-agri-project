@@ -1,19 +1,38 @@
-# model-leaf Manual page
+<!----- Conversion time: 0.945 seconds.
+
+
+Using this Markdown file:
+
+1. Cut and paste this output into your source file.
+2. See the notes and action items below regarding this conversion run.
+3. Check the rendered output (headings, lists, code blocks, tables) for proper
+   formatting and use a linkchecker before you publish this page.
+
+Conversion notes:
+
+* Docs to Markdown version 1.0β18
+* Sat Mar 07 2020 14:10:08 GMT-0800 (PST)
+* Source doc: https://docs.google.com/open?id=1uvhRShosFWqySOQqXwItVI6SNPeA_l2XltMpL98kqxY
+----->
+
+
+
+# leaf-segmentor Manual page
 
 
 ## Name
 
-model-leaf - the leaf model simple interface
+leaf-segmentor - the leaf model simple interface
 
 
 ## Synopsis
 
-model-leaf [--version]  [--help] <command> [<args>]
+```leaf-segmentor [--version]  [--help] <command> [<args>]```
 
 
 ## Description
 
-Model-leaf uses the Tensorflow implementation of Mask-RCNN by MatterPort and a handful of integration scripts and utilities to simplify training and inference of leaf datasets.
+leaf-segmentor uses the Tensorflow implementation of Mask-RCNN by MatterPort and a handful of integration scripts and utilities to simplify training and inference of leaf datasets.
 
 For information on the different subcommands read the according manual pages
 
@@ -40,43 +59,40 @@ Prints the leaf-model command line version
 ## Subcommands
 
 
-###### [model-leaf-train](#bookmark=kix.d73ecqfzwil1)
+###### [leaf-segmentor-train](#bookmark=kix.d73ecqfzwil1)
 
 Train a model from a dataset
 
 
-###### [model-leaf-infer](#bookmark=id.omgzqarzcj72)
+###### [leaf-segmentor-infer](#bookmark=id.omgzqarzcj72)
 
 Run inference on a directory of pictures, using a pretrained model
 
 
-###### [model-leaf-cut](#bookmark=id.t0gg9bnl4kan)
+###### [leaf-segmentor-cut](#bookmark=id.t0gg9bnl4kan)
 
 Cut leaves from annotated data
 
 
-###### [model-leaf-info](#bookmark=kix.icual4pnf7xg)
+###### [leaf-segmentor-info](#bookmark=kix.icual4pnf7xg)
 
 Print model metadata
 
- 
+
+# 
 
 
-# model-leaf-train Manual Page
+# leaf-segmentor-train Manual Page
 
 
 ## Name
 
-model-leaf-train - train a model for leaves
+leaf-segmentor-train - train a model for leaves
 
 
 ## Synopsis
 
-model-leaf train [-o <path> | --output=<path>] [-k <value> | --dataset-keep=<value>]  
-
-[-t <path> | --test-set=<path>] [-c <configfile> | --config=<configfile>] 
-
-[--preview-only] <datasetconfigpath>
+```leaf-segmentor train [-h] [-o <path> | --output=<path>] [-k <value> | --dataset-keep=<value>]  [-t <path> | --test-set=<path>] [-d <datasetclass> | --dataset-class <datasetclass>] [--preview-only] [-e <epochs> | --epochs <epochs>] [-s | --steps-per-epoch] [-l | --layers (all | heads | 3+ | 4+ | 5+)] [-p <pretrained> | --pretrain <pretrained>] <datasetconfigfile>```
 
 
 ## Notes
@@ -91,6 +107,12 @@ model-leaf train [-o <path> | --output=<path>] [-k <value> | --dataset-keep=<val
 Creates a dataset of synthetic pictures, and runs the training model on the dataset. The best result model is saved as a .h5 file. 
 
 
+## Positional argument
+
+
+###### <datasetconfigfile>
+
+
 ## Options
 
 
@@ -102,14 +124,6 @@ Creates a dataset of synthetic pictures, and runs the training model on the data
 specify path to .h5 model location [default: current]
 
 
-###### -k <value>
-
-
-######  --dataset-keep=<value>	
-
-specify how many samples to keep (default 0)
-
-
 ###### -t <path>
 
 
@@ -118,68 +132,137 @@ specify how many samples to keep (default 0)
 specify path to test set 
 
 
-###### -c <path>
+###### -k <value>
 
 
-###### --config=<path>			
+######  --dataset-keep=<value>	
 
-specify path to the model (mask-r cnn) config file.
-
-
-###### -s (random | grouped)
+specify how many samples to keep (default 0)
 
 
-###### --synthetic=(random | grouped)
-
-Set the synthetic dataset generator to scatter the leaves randomly (cucumber), or to group the leaves around a base (banana)
+###### -d <datasetclass> 
 
 
-###### --leaf-size-min=<size>
+###### --dataset-class <datasetclass>
 
-Set the minimum size of leaves in the synthetic picture
-
-
-###### --leaf-size-max=<size>
-
-Set the maximum size of leaves in the synthetic picture
-
-
-###### --leaf-number-min=<number>
-
-Set the minimum number of leaves in the synthetic picture
-
-
-###### --leaf-number-max=<number>
-
-Set the maximum number of leaves in the synthetic picture
+dataset module and class name to use [eg:  'BananaDataset']
 
 
 ###### --preview-only=<number>			
 
 generate samples of training set without training the model
 
- 
+
+###### -e <epochs>
 
 
-# model-leaf-infer Manual page
+###### --epochs <epochs>
+
+number of training epochs
+
+
+###### -s <steps> 
+
+
+###### --steps-per-epoch <steps>
+
+number of training steps to perform per epoch
+
+
+###### -l <{all, heads, 3+, 4+, 5+}>
+
+
+###### --layers <{all, heads, 3+, 4+, 5+}>
+
+layers of model to train. Other layers will remain unchanged
+
+
+######  -p <pretrained>
+
+
+###### --pretrain <pretrained> 
+
+path to a .h5 file with a pretrained model, or just 'COCO' to retrieve the coco pretrain file. 
+
+[default: COCO]
+
+
+# leaf-segmentor-infer Manual page
 
 
 ## Name
 
-model-leaf-infer - leaf inference command
+leaf-segmentor-infer - leaf inference command
 
 
 ## Synopsis
 
-model-leaf infer [-o <path> | --output=<path>] [--pictures-only | --contour-only] 
-
-
-    <modelpath> <picturespath>
+```leaf-segmentor infer [-h] [-m <model> | --model <model>] [-o <path> | --output=<path>]  [--no-pictures] [--no-contours] [--no-masks] <picturespath>```
 
 
 ## Description
 
-Loads a dataset, loads a model, runs inference on all the pictures located in a directory. Outputs a set of pictures with a translucent mask on every detected leaf. Additionally, a json annotation file is generated.
+Loads a model and runs inference on all the pictures located in a directory, or just on a picture. 
+
+Output is:
+
+
+
+1. A set of pictures with a translucent mask on every detected leaf
+2. A set of mask pictures
+3. A contour annotation file
+
+
+## Options
+
+
+###### -m <model> 
+
+
+###### --model <model>
+
+path to .h5 trained model to infer with 
+
+
+###### -o <path>
+
+
+###### --output=<path>
+
+Set output directory [default: current] 
+
+
+###### --no-pictures
+
+Doesn’t output the translucent pictures
+
+
+###### --no-contours
+
+Doesn’t output the contour file
+
+
+###### --no-masks
+
+Doesn’t output the mask pictures
+
+
+# leaf-segmentor-cut Manual page
+
+
+## Name
+
+leaf-segmentor-cut - single leaf extractor
+
+
+## Synopsis
+
+```leaf-segmentor cut [-h] [-o <path> | --output <path>] [-l <limit> | --limit <limit>] [-n <width>| --normalize=<width>] [-b | --background=(black | white | original, transparent)] [-a (banana | cucumber | maize) | --adapter] [-r | --rotate] <jsonpath>```
+
+
+## Description
+
+Cut single leaf pictures from an annotated dataset
 
 
 ## Options
@@ -193,39 +276,12 @@ Loads a dataset, loads a model, runs inference on all the pictures located in a 
 Set output directory [default: current] 
 
 
-###### --pictures-only
-
-Create only infered pictures with colorful transparent masks \
+###### -l <number>
 
 
+###### --limit=<number>
 
-###### --contour-only 		
-
-Create contour annotation file only
-
-
-
-# model-leaf-cut Manual page
-
-
-## Name
-
-model-leaf-cut - single leaf extractor
-
-
-## Synopsis
-
- model-leaf cut [-n <width>| --normalize=<width>] 
-
-[-b | --background=(black | white | original)] [--no-alpha] <jsonpath>
-
-
-## Description
-
-Cut single leaf pictures from an annotated dataset
-
-
-## Options
+Maximum number of object files to create. Not specifying this argument will result in cutting all the available objects
 
 
 ###### -n <width-size>
@@ -236,32 +292,41 @@ Cut single leaf pictures from an annotated dataset
 Normalize the generated pictures to the specified width-size. By default pictures are not normalized, every leaf stays at its original size
 
 
-###### -b ( black | white | original )
+###### -b ( black | white | original | transparent)
 
 
-###### --background=( black | white | original )
+###### --background=( black | white | original | transparent )
 
-Specify the RGB background of the leaf, regardless of the alpha channel value [default: original]
-
-
-###### --no-alpha
-
-Do not apply alpha around objects
+Specify the background of the leaf, if a color or original is selected, the object won’t have an alpha layer [default: transparent]
 
 
+###### -a (banana | cucumber | maize)
 
 
-# model-leaf-info Manual page
+###### --adapter (banana | cucumber | maize)
+
+Type of annotation file used - specify in order to correctly parse the contour file
+
+
+###### -r 
+
+
+###### --rotate
+
+Rotate output files to match 2 points from annotation
+
+
+# leaf-segmentor-info Manual page
 
 
 ## Name
 
-model-leaf-info - model metadata extractor
+leaf-segmentor-info - model metadata extractor
 
 
 ## Synopsis
 
- model-leaf info <modelpath>
+```leaf-segmentor info <modelpath>```
 
 
 ## Description
@@ -274,4 +339,4 @@ Prints information about the model saved in the model-info variable
 None
 
 
-
+<!-- Docs to Markdown version 1.0β18 -->
