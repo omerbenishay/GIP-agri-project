@@ -132,7 +132,7 @@ def calculate_IoU(image_name, detected_masks, ground_truth_dir, single_mask=True
     gt_file_names = []
     gt_masks = np.zeros([h,w,num_gt_masks])
     for root, dirs, files in os.walk(ground_truth_dir):
-        for file in files:
+        for i, file in enumerate(files):
             if file.startswith(image_name_prefix):
                 # read GT file, and use the GT only if num_pixels in mask > Threshold
                 tmp = np.array(Image.open(ground_truth_dir + file))
