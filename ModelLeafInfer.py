@@ -36,7 +36,9 @@ def infer(args):
         os.makedirs(output, exist_ok=True)
     model = MaskRCNN(mode="inference", config=inference_config, model_dir=output)
     model.load_weights(model_path, by_name=True)
-    output_dir = os.path.join(model.log_dir, "inference")
+    model.set_log_dir()
+
+    output_dir = model.log_dir
     os.makedirs(output_dir, exist_ok=True)
 
     # Infer
@@ -49,17 +51,22 @@ def infer(args):
         r = model.detect([image])[0]
         if should_save_masks:
             save_masks(r, output_dir, image_name)
-        
+
         if do_pictures:
             output_file_path = os.path.join(output_dir, image_name)
             visualize.save_instances(image, r['rois'], r['masks'], r['class_ids'],
-                                     ['BG', 'leave'], r['scores'], save_to=output_file_path,)
-        
+                                    ['BG', 'leave'], r['scores'], save_to=output_file_path,)
+
         if do_contours:
-            inference_dict[image_path] = get_contours(r)
-        
+            inference_dict[image_path], txt_contours  = get_contours(r)
+
+            for i, leaf_contour in enumerate(txt_contours):
+                contour_file_name = os.path.join(output_dir, image_name, str(i).zfill(3)) + ".txt"
+                np.savetxt(contour_file_name, leaf_contour, fmt='%.1f', delimiter=' , ')
+
+
         if compare_to_gt:
-            IoU_dict[image_path] = calculate_IoU(image_name, r['masks'], gt_dir)
+            IoU_dict[image_path] = _calculate_IoU(image_name, r['masks'], gt_dir)
 
 
     if do_contours:
@@ -84,14 +91,16 @@ def save_masks(r, output_dir, image_name):
 
 def get_contours(r):
     contours = {}
+    orig_contours = []
     for i in range(r['masks'].shape[-1]):
         mask = r['masks'][..., i]
         # A mask might have multiple polygons
         mask_contours = measure.find_contours(mask, 0.5)
         # reshape in numpy then convert to list
         contours["leaf_{}".format(i)] = [np.reshape(c, (-1,)).tolist() for c in mask_contours]
+        orig_contours.append(mask_contours)
 
-    return contours
+    return contours, orig_contours
 
 
 def generate_images(infer_path):
@@ -118,7 +127,7 @@ def get_inference_config(config):
 
 
 GROUND_TRUTH_MIN_SIZE_COEFF = 0.05  # 0.03    0.05
-def calculate_IoU(image_name, detected_masks, ground_truth_dir, single_mask=True):
+def _calculate_IoU(image_name, detected_masks, ground_truth_dir, single_mask=True):
     # AZ start validation of single image
     # TODO - log/results file
 
@@ -129,21 +138,24 @@ def calculate_IoU(image_name, detected_masks, ground_truth_dir, single_mask=True
     h = detected_masks.shape[0]
     w = detected_masks.shape[1]
     gt_min_size = GROUND_TRUTH_MIN_SIZE_COEFF * GROUND_TRUTH_MIN_SIZE_COEFF * h * w
+    
     gt_file_names = []
-    gt_masks = np.zeros([h,w,num_gt_masks])
     for root, dirs, files in os.walk(ground_truth_dir):
-        for i, file in enumerate(files):
+        for file in files:
             if file.startswith(image_name_prefix):
                 # read GT file, and use the GT only if num_pixels in mask > Threshold
                 tmp = np.array(Image.open(ground_truth_dir + file))
                 tmp_size = np.count_nonzero(tmp)
                 if tmp_size > gt_min_size:
+                    gt_file_names.append(file)
                     num_gt_masks = num_gt_masks + 1
-                    curr_gt_file = ground_truth_dir + file
-                    curr_mask = np.array(Image.open(curr_gt_file))
-                    gt_masks[:,:,i] = curr_mask
+                    print(file)
 
-    
+    gt_masks = np.zeros([h,w,num_gt_masks])
+    for i in range(num_gt_masks):
+        curr_gt_file = ground_truth_dir + gt_file_names[i]
+        curr_mask = np.array(Image.open(curr_gt_file))
+        gt_masks[:,:,i] = curr_mask
     # create empty IoU matrix M (num_ground_truth_masks x num detected_masks)
     # note: if validation during training - this should be done after each epoch.
     num_of_detected_masks = detected_masks.shape[2]
