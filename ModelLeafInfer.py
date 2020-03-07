@@ -126,8 +126,8 @@ def calculate_IoU(image_name, detected_masks, ground_truth_dir, single_mask=True
     # note: this should be done only once for each validation image (if train, do it once at the beginning, not after each epoch).
     image_name_prefix = image_name.split(".")[0] + "_GT_"
     num_gt_masks = 0
-    h = current_image.shape[0]
-    w = current_image.shape[1]
+    h = detected_masks.shape[0]
+    w = detected_masks.shape[1]
     gt_min_size = GROUND_TRUTH_MIN_SIZE_COEFF * GROUND_TRUTH_MIN_SIZE_COEFF * h * w
     gt_file_names = []
     gt_masks = np.zeros([h,w,num_gt_masks])
