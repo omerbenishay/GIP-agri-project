@@ -61,9 +61,10 @@ def infer(args):
             inference_dict[image_path], txt_contours  = get_contours(r)
 
             for i, leaf_contour in enumerate(txt_contours):
-                contour_file_name = os.path.join(output_dir, image_name, str(i).zfill(3)) + ".txt"
-                np.savetxt(contour_file_name, leaf_contour, fmt='%.1f', delimiter=' , ')
-
+                for j, polygon_contour in enumerate(leaf_contour):
+                    contour_file_name = os.path.join(output_dir, os.path.splitext(image_name)[0]) + \
+                    "_" + str(i).zfill(3) + "_" + str(j) + ".txt"
+                    np.savetxt(contour_file_name, polygon_contour, fmt='%.1f', delimiter=' , ')
 
         if compare_to_gt:
             IoU_dict[image_path] = _calculate_IoU(image_name, r['masks'], gt_dir)
