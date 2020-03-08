@@ -1,5 +1,5 @@
 import os
-from Config import ModelLeafConfig
+from Config import LeafSegmentorConfig
 from PIL import Image
 import numpy as np
 from tqdm import tqdm
@@ -7,7 +7,7 @@ from mrcnn import visualize
 from skimage import measure
 from matplotlib import cm
 import json
-from ModelLeafUtils import prompt_model
+from LeafSegmentorUtils import prompt_model
 
 COLOR_MAP = "Blues"
 CONTOUR_FILE_NAME = "contours.json"
@@ -31,7 +31,7 @@ def infer(args):
     model_path = prompt_model(model_path)
 
     # Load model
-    inference_config = get_inference_config(ModelLeafConfig)
+    inference_config = get_inference_config(LeafSegmentorConfig)
     if not os.path.exists(output):
         os.makedirs(output, exist_ok=True)
     model = MaskRCNN(mode="inference", config=inference_config, model_dir=output)

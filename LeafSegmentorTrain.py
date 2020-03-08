@@ -1,13 +1,13 @@
 from pydoc import locate
 import json
-from Config import ModelLeafConfig
+from Config import LeafSegmentorConfig
 from mrcnn import utils
 import numpy as np
 from PIL import Image
 import os
 from DatasetUtils import mask_to_image
 from tqdm import tqdm
-from ModelLeafUtils import get_clean_dict_from_class, add_metadata_dict_to_h5
+from LeafSegmentorUtils import get_clean_dict_from_class, add_metadata_dict_to_h5
 
 CONFIG_METADATA_NAME = 'Config'
 
@@ -27,7 +27,7 @@ def train(args):
     pretrain = args.pretrain
 
     # Create config class
-    train_config = ModelLeafConfig()
+    train_config = LeafSegmentorConfig()
 
     # Create model
     if steps_per_epoch > 0:
@@ -108,7 +108,7 @@ def load_coco_weights(model, dir_path="models"):
 
 
 def add_config_to_model(model_path):
-    config_dict = get_clean_dict_from_class(ModelLeafConfig)
+    config_dict = get_clean_dict_from_class(LeafSegmentorConfig)
     # iterate over .h5 files
     for _, _, files in os.walk(model_path):
         for file in files:

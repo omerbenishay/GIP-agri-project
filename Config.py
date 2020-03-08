@@ -1,7 +1,7 @@
 from mrcnn.config import Config
 import numpy as np
 
-class ModelLeafConfig(Config):
+class LeafSegmentorConfig(Config):
     # Give the configuration a recognizable name
     NAME = "leaves"
 

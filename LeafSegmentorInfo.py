@@ -1,5 +1,5 @@
-from ModelLeafUtils import prompt_model, get_metadata_dict_from_h5
-from ModelLeafTrain import CONFIG_METADATA_NAME
+from LeafSegmentorUtils import prompt_model, get_metadata_dict_from_h5
+from LeafSegmentorTrain import CONFIG_METADATA_NAME
 from pprint import pprint
 
 

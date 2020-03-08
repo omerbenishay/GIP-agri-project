@@ -1,8 +1,8 @@
 import argparse
-from ModelLeafInfer import infer
-from ModelLeafTrain import train
-from ModelLeafCut import cut
-from ModelLeafInfo import info
+from LeafSegmentorInfer import infer
+from LeafSegmentorTrain import train
+from LeafSegmentorCut import cut
+from LeafSegmentorInfo import info
 from Reference import HelpReference
 
 
