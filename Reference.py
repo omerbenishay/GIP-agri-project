@@ -35,6 +35,7 @@ class HelpReference:
         path = "path to directory containing images to infer or path to image to infer"
         model = "path to .h5 trained model to infer with"
         no_masks = "do not save mask images"
+        gt = "path to ground truth mask directory, prefix should be '<image_name>_GT_'"
 
     class CutReference:
         description = "Cut single leaf pictures from an annotated dataset"

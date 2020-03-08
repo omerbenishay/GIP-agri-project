@@ -38,6 +38,7 @@ def main():
     parser_infer.add_argument('path', help=HelpReference.InferReference.path)
     parser_infer.add_argument('-m', '--model', help=HelpReference.InferReference.model, default='./')
     parser_infer.add_argument('-o', '--output', help=HelpReference.InferReference.output, default='outputs')
+    parser_infer.add_argument('--gt', help=HelpReference.InferReference.gt, default='')
     parser_infer.add_argument('--no-pictures', help=HelpReference.InferReference.no_pictures, action='store_true')
     parser_infer.add_argument('--no-contours', help=HelpReference.InferReference.no_contours, action='store_true')
     parser_infer.add_argument('--no-masks', help=HelpReference.InferReference.no_masks, action='store_true')
