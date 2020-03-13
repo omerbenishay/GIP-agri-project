@@ -1,20 +1,50 @@
 ## Getting started
 ### Install the environment
-Clone the repository ```git clone git@github.com:simonlousky/model-leaf.git```
-
-#### Simple setup
-1. Go to directory and run `./setup.sh`
-If that does not work try first `sudo chmod +x setup.sh` then retry
-
-#### Docker
-See Readme in docker directory
+1. Connect to the agrinet remote server with your credentials
+2. Clone the repository ```git clone https://github.com/simonlousky/model-leaf.git leafsegmentor```
+3. Enter the directory with `cd leafsegmentor`
+4. Run setup `bash setup.sh` and follow the miniconda install instructions with default values
+* In case it didn't finish or you lost connection - do step 4 again
+The setup should add an alias leafsegmentor for "python LeafSegmentor.py" so after setup you only need to 
+enter the leafsegmentor directory to start working!
 
 ### Using the command
-1. Go to the LeafSegmentor directory
+
+1. Go to the leafsegmentor directory
 2. Run `leaf-segmentor --help` 
 You should see the command help doc.
-For further info read continue reading here or refer to the `--help` of every sub command 
+For further info continue reading here or refer to the `--help` of every sub command 
  
+### Command examples
+#### Example 1
+
+```
+bla bla
+```
+#### Example 2
+```
+bla bla
+```
+## A to Z work flow
+
+### Download training task
+1. bla
+2. bla
+### Cut leaves
+1. bla
+2. bla
+#### Customize leaf cutting
+1. bla
+2. bla
+### Train model
+1. bla
+2. bla
+#### Customize training and config
+#### Work with difference datasets
+
+### Infer with model
+
+
 <!----- Conversion time: 0.945 seconds.
 
 
