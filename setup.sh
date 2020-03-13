@@ -2,7 +2,7 @@ ENV_NAME=leafsegmentor
 CONDA_INSTALL_NAME=miniconda_install.sh
 
 # Install conda if not installed
-if [[ ! command -v conda ]]; then
+if [[ ! $(command -v conda) ]]; then
 
   if [[ ! -f ~/$CONDA_INSTALL_NAME ]]; then
     curl -o ~/$CONDA_INSTALL_NAME https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
