@@ -11,7 +11,7 @@ enter the leafsegmentor directory to start working!
 ### Using the command
 
 1. Go to the leafsegmentor directory
-2. Run `leaf-segmentor --help` 
+2. Run `leafsegmentor --help` 
 You should see the command help doc.
 For further info continue reading here or refer to the `--help` of every sub command 
  
@@ -26,7 +26,7 @@ bla bla
 bla bla
 ```
 ## A to Z work flow
-
+Description of the training concept (BG and leaves etc...)
 ### Download training task
 1. bla
 2. bla
@@ -64,22 +64,22 @@ Conversion notes:
 
 
 
-# leaf-segmentor Manual page
+# leafsegmentor Manual page
 
 
 ## Name
 
-leaf-segmentor - the leaf model simple interface
+leafsegmentor - the leaf model simple interface
 
 
 ## Synopsis
 
-```leaf-segmentor [--version]  [--help] <command> [<args>]```
+```leafsegmentor [--version]  [--help] <command> [<args>]```
 
 
 ## Description
 
-leaf-segmentor uses the Tensorflow implementation of Mask-RCNN by MatterPort and a handful of integration scripts and utilities to simplify training and inference of leaf datasets.
+leafsegmentor uses the Tensorflow implementation of Mask-RCNN by MatterPort and a handful of integration scripts and utilities to simplify training and inference of leaf datasets.
 
 For information on the different subcommands read the according manual pages
 
@@ -106,22 +106,22 @@ Prints the leaf-model command line version
 ## Subcommands
 
 
-###### [leaf-segmentor-train](#bookmark=kix.d73ecqfzwil1)
+###### [leafsegmentor-train](#bookmark=kix.d73ecqfzwil1)
 
 Train a model from a dataset
 
 
-###### [leaf-segmentor-infer](#bookmark=id.omgzqarzcj72)
+###### [leafsegmentor-infer](#bookmark=id.omgzqarzcj72)
 
 Run inference on a directory of pictures, using a pretrained model
 
 
-###### [leaf-segmentor-cut](#bookmark=id.t0gg9bnl4kan)
+###### [leafsegmentor-cut](#bookmark=id.t0gg9bnl4kan)
 
 Cut leaves from annotated data
 
 
-###### [leaf-segmentor-info](#bookmark=kix.icual4pnf7xg)
+###### [leafsegmentor-info](#bookmark=kix.icual4pnf7xg)
 
 Print model metadata
 
@@ -129,17 +129,17 @@ Print model metadata
 # 
 
 
-# leaf-segmentor-train Manual Page
+# leafsegmentor-train Manual Page
 
 
 ## Name
 
-leaf-segmentor-train - train a model for leaves
+leafsegmentor-train - train a model for leaves
 
 
 ## Synopsis
 
-```leaf-segmentor train [-h] [-o <path> | --output=<path>] [-k <value> | --dataset-keep=<value>]  [-t <path> | --test-set=<path>] [-d <datasetclass> | --dataset-class <datasetclass>] [--preview-only] [-e <epochs> | --epochs <epochs>] [-s | --steps-per-epoch] [-l | --layers (all | heads | 3+ | 4+ | 5+)] [-p <pretrained> | --pretrain <pretrained>] <datasetconfigfile>```
+```leafsegmentor train [-h] [-o <path> | --output=<path>] [-k <value> | --dataset-keep=<value>]  [-t <path> | --test-set=<path>] [-d <datasetclass> | --dataset-class <datasetclass>] [--preview-only] [-e <epochs> | --epochs <epochs>] [-s | --steps-per-epoch] [-l | --layers (all | heads | 3+ | 4+ | 5+)] [-p <pretrained> | --pretrain <pretrained>] <datasetconfigfile>```
 
 
 ## Notes
@@ -234,17 +234,17 @@ path to a .h5 file with a pretrained model, or just 'COCO' to retrieve the coco 
 [default: COCO]
 
 
-# leaf-segmentor-infer Manual page
+# leafsegmentor-infer Manual page
 
 
 ## Name
 
-leaf-segmentor-infer - leaf inference command
+leafsegmentor-infer - leaf inference command
 
 
 ## Synopsis
 
-```leaf-segmentor infer [-h] [-m <model> | --model <model>] [-o <path> | --output=<path>]  [--no-pictures] [--no-contours] [--no-masks] <picturespath>```
+```leafsegmentor infer [-h] [-m <model> | --model <model>] [-o <path> | --output=<path>]  [--no-pictures] [--no-contours] [--no-masks] <picturespath>```
 
 
 ## Description
@@ -294,17 +294,17 @@ Doesn’t output the contour file
 Doesn’t output the mask pictures
 
 
-# leaf-segmentor-cut Manual page
+# leafsegmentor-cut Manual page
 
 
 ## Name
 
-leaf-segmentor-cut - single leaf extractor
+leafsegmentor-cut - single leaf extractor
 
 
 ## Synopsis
 
-```leaf-segmentor cut [-h] [-o <path> | --output <path>] [-l <limit> | --limit <limit>] [-n <width>| --normalize=<width>] [-b | --background=(black | white | original, transparent)] [-a (banana | cucumber | maize) | --adapter] [-r | --rotate] <jsonpath>```
+```leafsegmentor cut [-h] [-o <path> | --output <path>] [-l <limit> | --limit <limit>] [-n <width>| --normalize=<width>] [-b | --background=(black | white | original, transparent)] [-a (banana | cucumber | maize) | --adapter] [-r | --rotate] <jsonpath>```
 
 
 ## Description
@@ -363,17 +363,17 @@ Type of annotation file used - specify in order to correctly parse the contour f
 Rotate output files to match 2 points from annotation
 
 
-# leaf-segmentor-info Manual page
+# leafsegmentor-info Manual page
 
 
 ## Name
 
-leaf-segmentor-info - model metadata extractor
+leafsegmentor-info - model metadata extractor
 
 
 ## Synopsis
 
-```leaf-segmentor info <modelpath>```
+```leafsegmentor info <modelpath>```
 
 
 ## Description
