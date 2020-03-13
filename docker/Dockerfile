@@ -3,7 +3,7 @@ ARG cudnn_version=7
 
 FROM nvidia/cuda:10.0-base-ubuntu16.04
 
-COPY environment.yml /.
+COPY ../environment.yml /.
 COPY entrypoint.sh /
 
 RUN apt-get update && apt-get install -y \
