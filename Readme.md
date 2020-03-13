@@ -1,3 +1,20 @@
+## Getting started
+### Install the environment
+Clone the repository ```git clone git@github.com:simonlousky/model-leaf.git```
+
+#### Simple setup
+1. Go to directory and run `./setup.sh`
+If that does not work try first `sudo chmod +x setup.sh` then retry
+
+#### Docker
+See Readme in docker directory
+
+### Using the command
+1. Go to the LeafSegmentor directory
+2. Run `leaf-segmentor --help` 
+You should see the command help doc.
+For further info read continue reading here or refer to the `--help` of every sub command 
+ 
 <!----- Conversion time: 0.945 seconds.
 
 
