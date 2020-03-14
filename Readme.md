@@ -26,9 +26,9 @@ For further info continue reading here or refer to the `--help` of every sub com
 leafsegmentor train dataset_config.json
 ```
 
-#### Example 2
+#### Inference and compare with ground truth
 ```
-bla bla
+leafsegmentor infer -m ../models/banana_LS2_2019_11_18.h5 --gt BananaAnnotationAdapter --task 129 ../GT_images_jsons
 ```
 ## A to Z work flow
 Description of the training concept (BG and leaves etc...)
