@@ -16,11 +16,12 @@ You should see the command help doc.
 For further info continue reading here or refer to the `--help` of every sub command 
  
 ### Command examples
-#### Example 1
+#### Training example with pre-cut banana leaves
 
 ```
-bla bla
+leafsegmentor train dataset_config.json
 ```
+
 #### Example 2
 ```
 bla bla
