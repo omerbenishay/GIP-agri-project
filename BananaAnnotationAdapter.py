@@ -1,12 +1,15 @@
 import numpy as np
 import json
 import os
+from BaseAnnotationAdapter import BaseAnnotationAdapter
 
 
-class BananaAnnotationAdapter(object):
+class BananaAnnotationAdapter(BaseAnnotationAdapter):
     IMAGE_FORMATS = ['jpg', 'jpeg', 'png', 'bmp']
 
-    def __init__(self, annotation_path, n=None):
+    def __init__(self, annotation_path, task_id, n=None):
+
+        self.task_id = int(task_id)
 
         annotation_file_paths = [annotation_path]
         self.dir_path = os.path.dirname(annotation_path)
@@ -25,9 +28,6 @@ class BananaAnnotationAdapter(object):
         self.annotations = {}
         self._annotation_generate()
         self.index_to_leaf_key_lut = []
-
-    def __iter__(self):
-        return self
 
     def _cut_jobs(self):
         # polygon_items = [annotation for annotation in self.annotations.items() if annotation[]]
@@ -56,7 +56,12 @@ class BananaAnnotationAdapter(object):
             last_polygon_id = None
             for annotation_data in reversed(annotations_array[1:]):
                 _id = annotation_data["_id"]
-                if annotation_data["annotation_type"] == "polygon":
+                is_valid_record = (annotation_data["deleted"] == 0 and
+                                   annotation_data["annotation_task_id"] == self.task_id)
+
+                # is_valid_record = annotation_data["deleted"] == 0
+
+                if is_valid_record and annotation_data["annotation_type"] == "polygon":
                     self.annotations[_id] = {}
                     # Flatten the coordinates of the polygon to one array
                     leaf_polygon_coords = [[ann['x'], ann['y']] for ann in annotation_data["annotations"]]
@@ -65,7 +70,7 @@ class BananaAnnotationAdapter(object):
                     self.annotations[_id]["image"] = annotation_data["frame_id"]
                     last_polygon_id = _id
 
-                if annotation_data["annotation_type"] == "point":
+                if is_valid_record and annotation_data["annotation_type"] == "point":
                     if last_polygon_id is None:
                         continue
                     if self.annotations[last_polygon_id].get("point", None) is None:

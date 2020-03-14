@@ -1,8 +1,9 @@
 import json
 import os
+from BaseAnnotationAdapter import BaseAnnotationAdapter
 
 
-class CocoAnnotationAdapter(object):
+class CocoAnnotationAdapter(BaseAnnotationAdapter):
     def __init__(self, coco_file_path, n=None):
         with open(coco_file_path, 'r') as f:
             self.data = json.load(f)
@@ -10,9 +11,6 @@ class CocoAnnotationAdapter(object):
         self.category = 'leaf'
         self.dir_path = os.path.dirname(coco_file_path)
         self.generator = self._cut_jobs()
-
-    def __iter__(self):
-        return self
 
     def _cut_jobs(self):
         annotations = self._annotation_generator()

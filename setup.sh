@@ -18,7 +18,7 @@ fi
 # Create leafsegmentor conda environment
 if [[ "$(conda env list | grep $ENV_NAME | awk '{print $1}')" != $ENV_NAME ]] ; then
   conda env create --name $ENV_NAME -v -f environment.yml;
-  echo "alias leafsegmentor='conda activate $ENV_NAME && python LeafSegmentor.py'" >> ~/.bash_profile
+  echo "alias leafsegmentor='conda deactivate && conda activate $ENV_NAME && python LeafSegmentor.py'" >> ~/.bash_profile
   . ~/.bash_profile
 fi
 

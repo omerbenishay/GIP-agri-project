@@ -16,7 +16,8 @@ COLOR_BLACK = (0, 0, 0)
 adapter_class_lut = {
     'banana': 'BananaAnnotationAdapter',
     'cucumber': 'CocoAnnotationAdapter',
-    'maize': 'MaizeAnnotationAdapter'
+    'maize': 'MaizeAnnotationAdapter',
+    'inference': 'TxtAnnotationAdapter'
 }
 
 
@@ -30,12 +31,17 @@ def cut(args):
     class_name = adapter_class_lut[args.adapter]
     adapter_class = locate(class_name + '.' + class_name)
     should_rotate = args.rotate
+    task_id = args.task
 
     # Track performance
     start = time.time()
 
     # Create cut sequence
-    jobs = adapter_class(annotation_path, limit)
+    if task_id is not None:
+        jobs = adapter_class(annotation_path, task_id, limit)
+    else:
+        jobs = adapter_class(annotation_path, limit)
+
     jobs_for_pool = []
     for leaf_annotation, image_path, i in jobs:
         job_pipe = [(image_from_annotation, (leaf_annotation, image_path))]

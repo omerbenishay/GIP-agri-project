@@ -4,12 +4,16 @@
 2. Clone the repository ```git clone https://github.com/simonlousky/model-leaf.git leafsegmentor```
 3. Enter the directory with `cd leafsegmentor`
 4. Run setup `bash setup.sh` and follow the miniconda install instructions with default values
+    * This may take a while, go make yourself a coffee
+
+#### Troubleshooting
 * In case it didn't finish or you lost connection - do step 4 again
 The setup should add an alias leafsegmentor for "python LeafSegmentor.py" so after setup you only need to 
 enter the leafsegmentor directory to start working!
+* If your session doesn't start with bash as the default shell (run ```echo $0``` to check that) 
+then you will need to run ```. ~/.bash_profile``` at the beginning of each session 
 
 ### Using the command
-
 1. Go to the leafsegmentor directory
 2. Run `leafsegmentor --help` 
 You should see the command help doc.

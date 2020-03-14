@@ -35,7 +35,8 @@ class HelpReference:
         path = "path to directory containing images to infer or path to image to infer"
         model = "path to .h5 trained model to infer with"
         no_masks = "do not save mask images"
-        gt = "path to ground truth mask directory, prefix should be '<image_name>_GT_'"
+        task = "task id for agrinet datasets"
+        gt = "Dataset adapter name"
 
     class CutReference:
         description = "Cut single leaf pictures from an annotated dataset"
@@ -46,6 +47,7 @@ class HelpReference:
         output = "Set output directory [default: current]"
         adapter = "Type of annotation - specify in order to correctly parse the annotation file"
         rotate = "Rotate output files to match 2 points from annotation"
+        task = "task id for agrinet datasets"
 
     class InfoReference:
         description = "Prints information about the model saved in the model-info variable"

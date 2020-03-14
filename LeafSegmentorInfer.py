@@ -1,31 +1,40 @@
-import os
+from LeafSegmentorUtils import prompt_model
+from pycocotools import mask as mask_tools
 from Config import LeafSegmentorConfig
-from PIL import Image
-import numpy as np
-from tqdm import tqdm
 from mrcnn import visualize
 from skimage import measure
 from matplotlib import cm
+from pydoc import locate
+from tqdm import tqdm
+from PIL import Image
+import numpy as np
 import json
-from LeafSegmentorUtils import prompt_model
+import os
 
 COLOR_MAP = "Blues"
 CONTOUR_FILE_NAME = "contours.json"
 
 
 def infer(args):
-    from mrcnn.model import MaskRCNN
+    from mrcnn import model as mrcnn_lib
     infer_path = args.path
     output = args.output
     do_pictures = not args.no_pictures
     do_contours = not args.no_contours
     model_path = args.model
     should_save_masks = not args.no_masks
-    compare_to_gt = args.gt != ""
-    gt_dir = args.gt
+    gt_adapter = args.gt
+    task_id = args.task
+    compare_to_gt = gt_adapter is not None
 
     # Retrieve images
-    images = generate_images(infer_path)
+    images = list(generate_images(infer_path))
+
+    # Retrieve gt masks
+    if compare_to_gt:
+        adapter_class = locate(gt_adapter + '.' + gt_adapter)
+        gt_path = infer_path
+        gt_annotation_map = generate_annotation_map(adapter_class, gt_path, images, task_id)
 
     # Retrieve model path
     model_path = prompt_model(model_path)
@@ -34,7 +43,7 @@ def infer(args):
     inference_config = get_inference_config(LeafSegmentorConfig)
     if not os.path.exists(output):
         os.makedirs(output, exist_ok=True)
-    model = MaskRCNN(mode="inference", config=inference_config, model_dir=output)
+    model = mrcnn_lib.MaskRCNN(mode="inference", config=inference_config, model_dir=output)
     model.load_weights(model_path, by_name=True)
     model.set_log_dir()
 
@@ -44,43 +53,48 @@ def infer(args):
     # Infer
     inference_dict = {}
     IoU_dict = {}
-    for image_path in tqdm(list(images)):
+    for image_path in tqdm(images):
         inference_dict[image_path] = []
         image_name = os.path.basename(image_path)
         image = np.array(Image.open(image_path))
         r = model.detect([image])[0]
         if should_save_masks:
-            save_masks(r, output_dir, image_name)
+            save_masks(r['masks'], output_dir, image_name)
 
         if do_pictures:
             output_file_path = os.path.join(output_dir, image_name)
             visualize.save_instances(image, r['rois'], r['masks'], r['class_ids'],
-                                    ['BG', 'leave'], r['scores'], save_to=output_file_path,)
+                                     ['BG', 'leave'], r['scores'], save_to=output_file_path,)
 
         if do_contours:
-            inference_dict[image_path], txt_contours  = get_contours(r)
+            inference_dict[image_path], txt_contours = get_contours(r)
 
             for i, leaf_contour in enumerate(txt_contours):
                 for j, polygon_contour in enumerate(leaf_contour):
                     contour_file_name = os.path.join(output_dir, os.path.splitext(image_name)[0]) + \
-                    "_" + str(i).zfill(3) + "_" + str(j) + ".txt"
+                                        "_" + str(i).zfill(3) + "_" + str(j) + ".txt"
                     np.savetxt(contour_file_name, polygon_contour, fmt='%.1f', delimiter=' , ')
 
         if compare_to_gt:
-            IoU_dict[image_path] = _calculate_IoU(image_name, r['masks'], gt_dir)
-            total_score = sum(IoU_dict.values()) / len(IoU_dict)
-            print("average IoU scores: " + str(total_score))
+            gt_masks = get_all_masks(gt_annotation_map[image_path], image_path)
+            gt_image_name = ".".join(image_name.split(".")[:-1]) + "_GT.png"
+            save_masks(gt_masks, output_dir, gt_image_name)
+            IoU_dict[image_path] = calculate_iou(image_name, r['masks'], gt_masks)
 
     if do_contours:
         with open(os.path.join(output_dir, CONTOUR_FILE_NAME), 'w') as f:
             f.write(json.dumps(inference_dict, indent=2))
 
+    if compare_to_gt:
+        total_score = sum(IoU_dict.values()) / len(IoU_dict)
+        print("average IoU scores: " + str(total_score))
 
-def save_masks(r, output_dir, image_name):
-    masks_shape = r['masks'].shape
+
+def save_masks(masks, output_dir, image_name):
+    masks_shape = masks.shape
     image = np.zeros(masks_shape[:2], dtype='uint8')
     for i in range(masks_shape[-1]):
-        mask = r['masks'][..., i]
+        mask = masks[..., i]
         image += mask.astype('uint8') * i
 
     my_cm = cm.get_cmap(COLOR_MAP, masks_shape[-1] + 1)
@@ -106,14 +120,45 @@ def get_contours(r):
 
 
 def generate_images(infer_path):
+    """
+    :param infer_path:
+    :return: generator of image paths
+    """
     if os.path.isdir(infer_path):
-        for _, _, files in os.walk(infer_path):
+        for dir_path, _, files in os.walk(infer_path):
             for file in files:
-                if file.split(".")[-1].lower() in ['jpg', 'jpeg', 'png']:
-                    yield os.path.join(infer_path, file)
+                if file.split(".")[-1].lower() in ['jpg', 'jpeg', 'png', 'bmp']:
+                    yield os.path.join(dir_path, file)
     else:
-        if infer_path.split(".")[-1].lower() in ['jpg', 'jpeg', 'png']:
+        if infer_path.split(".")[-1].lower() in ['jpg', 'jpeg', 'png', 'bmp']:
             return [os.path.join(infer_path)]
+
+
+def generate_annotation_map(adapter_class, gt_dir, images, task_id=None):
+    """
+    :param adapter_class:
+    :param images: list or generator of images paths
+    :param gt_dir: directory that contains the annotation files
+    :param task_id: argument to adapter
+    :return: dictionary {"image_path": list(leave_polygons)}
+    """
+    images = list(images)
+    if task_id is not None:
+        annotations = adapter_class(gt_dir, task_id)
+    else:
+        annotations = adapter_class(gt_dir)
+
+    leaves_map = {}
+    for annotation, image_path, i in annotations:
+        if image_path not in images:
+            continue
+
+        if leaves_map.get(image_path, None) is None:
+            leaves_map[image_path] = []
+
+        leaves_map[image_path].append(annotation)
+
+    return leaves_map
 
 
 def get_inference_config(config):
@@ -129,35 +174,39 @@ def get_inference_config(config):
 
 
 GROUND_TRUTH_MIN_SIZE_COEFF = 0.05  # 0.03    0.05
-def _calculate_IoU(image_name, detected_masks, ground_truth_dir, single_mask=True):
+
+
+def calculate_iou(image_name, detected_masks, gt_masks, single_mask=True):
     # AZ start validation of single image
     # TODO - log/results file
 
     # get ground truth masks for this image
     # note: this should be done only once for each validation image (if train, do it once at the beginning, not after each epoch).
-    image_name_prefix = image_name.split(".")[0] + "_GT_"
-    num_gt_masks = 0
-    h = detected_masks.shape[0]
-    w = detected_masks.shape[1]
-    gt_min_size = GROUND_TRUTH_MIN_SIZE_COEFF * GROUND_TRUTH_MIN_SIZE_COEFF * h * w
-    
-    gt_file_names = []
-    for root, dirs, files in os.walk(ground_truth_dir):
-        for file in files:
-            if file.startswith(image_name_prefix):
-                # read GT file, and use the GT only if num_pixels in mask > Threshold
-                tmp = np.array(Image.open(ground_truth_dir + file))
-                tmp_size = np.count_nonzero(tmp)
-                if tmp_size > gt_min_size:
-                    gt_file_names.append(file)
-                    num_gt_masks = num_gt_masks + 1
-                    print(file)
+    # image_name_prefix = image_name.split(".")[0] + "_GT_"
+    # num_gt_masks = 0
+    # h = detected_masks.shape[0]
+    # w = detected_masks.shape[1]
+    # gt_min_size = GROUND_TRUTH_MIN_SIZE_COEFF * GROUND_TRUTH_MIN_SIZE_COEFF * h * w
+    #
+    # gt_file_names = []
+    # for root, dirs, files in os.walk(ground_truth_dir):
+    #     for file in files:
+    #         if file.startswith(image_name_prefix):
+    #             # read GT file, and use the GT only if num_pixels in mask > Threshold
+    #             tmp = np.array(Image.open(ground_truth_dir + file))
+    #             tmp_size = np.count_nonzero(tmp)
+    #             if tmp_size > gt_min_size:
+    #                 gt_file_names.append(file)
+    #                 num_gt_masks = num_gt_masks + 1
+    #                 print(file)
 
-    gt_masks = np.zeros([h,w,num_gt_masks])
-    for i in range(num_gt_masks):
-        curr_gt_file = ground_truth_dir + gt_file_names[i]
-        curr_mask = np.array(Image.open(curr_gt_file))
-        gt_masks[:,:,i] = curr_mask
+    # gt_masks = np.zeros([h,w,num_gt_masks])
+    num_gt_masks = gt_masks.shape[-1]
+
+    # for i in range(num_gt_masks):
+    #     curr_gt_file = ground_truth_dir + gt_file_names[i]
+    #     curr_mask = np.array(Image.open(curr_gt_file))
+    #     gt_masks[:,:,i] = curr_mask
     # create empty IoU matrix M (num_ground_truth_masks x num detected_masks)
     # note: if validation during training - this should be done after each epoch.
     num_of_detected_masks = detected_masks.shape[2]
@@ -201,5 +250,49 @@ def _calculate_IoU(image_name, detected_masks, ground_truth_dir, single_mask=Tru
     # AZ end validation of single image
 
 
-if __name__ == "__main__":
-    print(prompt_model("/home/nomios/Documents/Projects"))
+def get_all_masks(leaves_list, image_path):
+    """Each leaf is a tuple (leaf_annotation, image_path, i)"""
+    with Image.open(image_path) as im:
+        image_width, image_height = im.size
+    masks = np.empty(shape=(image_height, image_width, len(leaves_list)))
+
+    for i, polygon_list in enumerate(leaves_list):
+        # A single leaf might have multiple polygons but in can the adapter doesn't support it
+        if not isinstance(polygon_list[0], list):
+            polygon_list = [polygon_list]
+        masks[..., i] = get_mask_from_list(polygon_list, image_width, image_height)
+
+    return masks
+
+
+def get_mask_from_list(xy_polygons, width, height):
+    """
+    :param xy_polygons: list of polygons
+    :type xy_polygons: list(list(float))
+    :param width: image width
+    :param height: image height
+    :return: a mask of shape (width, height)
+    :rtype: numpy array of float, or None if no mask is exists
+    """
+    rle = ann_to_rle(xy_polygons, height, width)
+    m = mask_tools.decode(rle)
+    # Some objects are so small that they're less than 1 pixel area
+    # and end up rounded out. Skip those objects.
+    if m.max() < 1:
+        return None
+
+    return m
+
+
+def ann_to_rle(segm, height, width):
+    """
+    Convert annotation which can be polygons, uncompressed RLE to RLE.
+    :return: binary mask (numpy 2D array)
+    """
+    if isinstance(segm, list):
+        # polygon -- a single object might consist of multiple parts
+        # we merge all parts into one mask rle code
+        rles = mask_tools.frPyObjects(segm, height, width)
+        rle = mask_tools.merge(rles)
+
+    return rle

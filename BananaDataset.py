@@ -1,4 +1,3 @@
-
 from mrcnn import utils
 from PIL import Image
 import os
