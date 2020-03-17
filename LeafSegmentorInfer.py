@@ -95,7 +95,7 @@ def save_masks(masks, output_dir, image_name):
     image = np.zeros(masks_shape[:2], dtype='uint8')
     for i in range(masks_shape[-1]):
         mask = masks[..., i]
-        image += mask.astype('uint8') * i
+        image += mask.astype('uint8') * (i + 1)
 
     my_cm = cm.get_cmap(COLOR_MAP, masks_shape[-1] + 1)
     my_cm.set_bad(color='black')
