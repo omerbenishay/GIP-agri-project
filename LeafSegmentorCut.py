@@ -13,13 +13,6 @@ multiprocessing.set_start_method('spawn', True)
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
 
-adapter_class_lut = {
-    'banana': 'BananaAnnotationAdapter',
-    'cucumber': 'CocoAnnotationAdapter',
-    'maize': 'MaizeAnnotationAdapter',
-    'inference': 'TxtAnnotationAdapter'
-}
-
 
 def cut(args):
     # Reconstruct arguments
@@ -28,7 +21,7 @@ def cut(args):
     output_dir = args.output
     width = args.normalize
     background = args.background
-    class_name = adapter_class_lut[args.adapter]
+    class_name = args.adapter
     adapter_class = locate(class_name + '.' + class_name)
     should_rotate = args.rotate
     task_id = args.task
@@ -42,6 +35,7 @@ def cut(args):
     else:
         jobs = adapter_class(annotation_path, limit)
 
+    jobs_for_pool = []
     jobs_for_pool = []
     for leaf_annotation, image_path, i in jobs:
         job_pipe = [(image_from_annotation, (leaf_annotation, image_path))]

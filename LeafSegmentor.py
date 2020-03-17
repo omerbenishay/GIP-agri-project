@@ -53,8 +53,7 @@ def main():
     parser_cut.add_argument('-n', '--normalize', type=int, help=HelpReference.CutReference.normalize)
     parser_cut.add_argument('-b', '--background', choices=['black', 'white', 'original', 'transparent'],
                             help=HelpReference.CutReference.background, default='transparent')
-    parser_cut.add_argument('-a', '--adapter', choices=['banana', 'cucumber', 'maize'],
-                            help=HelpReference.CutReference.adapter, default='cucumber')
+    parser_cut.add_argument('-a', '--adapter', help=HelpReference.CutReference.adapter, default='AgrinetAdapter')
     parser_cut.add_argument('-r', '--rotate', help=HelpReference.CutReference.rotate, action='store_true')
 
     # parser for info

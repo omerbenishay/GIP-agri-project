@@ -4,7 +4,7 @@ import os
 from BaseAnnotationAdapter import BaseAnnotationAdapter
 
 
-class BananaAnnotationAdapter(BaseAnnotationAdapter):
+class AgrinetAdapter(BaseAnnotationAdapter):
     IMAGE_FORMATS = ['jpg', 'jpeg', 'png', 'bmp']
 
     def __init__(self, annotation_path, task_id, n=None):

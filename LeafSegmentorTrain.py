@@ -19,7 +19,6 @@ def train(args):
     samples_number = args.dataset_keep
     # test_set = args.test_set
     preview_only = args.preview_only
-    dataset_class_name = args.dataset_class
     dataset_config_path = args.dataset_config_file
     epochs = args.epochs
     steps_per_epoch = args.steps_per_epoch
@@ -41,11 +40,12 @@ def train(args):
     samples_output_dir = os.path.join(model.log_dir, "samples")
 
     # Create dataset
-    dataset_class = locate(dataset_class_name + '.' + dataset_class_name)
-    dataset_config = None
-    if dataset_config_path is not None:
-        with open(dataset_config_path) as dataset_config_file:
-            dataset_config = json.load(dataset_config_file).get(dataset_class_name)
+    with open(dataset_config_path) as dataset_config_file:
+        dataset_config = json.load(dataset_config_file)
+    dataset_class = dataset_config["dataset_module"] + "." + dataset_config["dataset_class"]
+    dataset_class = locate(dataset_class)
+
+    dataset_config = dataset_config["config"]
     dataset_train = dataset_class.from_config(dataset_config["train"], train_config.IMAGE_SHAPE[0], train_config.IMAGE_SHAPE[1])
     dataset_valid = dataset_class.from_config(dataset_config["valid"], train_config.IMAGE_SHAPE[0], train_config.IMAGE_SHAPE[1])
 

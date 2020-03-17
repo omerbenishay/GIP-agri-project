@@ -34,8 +34,7 @@ if [[ ! -d ../cut_jobs ]]; then
 fi
 
 if [[ ! -d ../datasets ]]; then
-  echo "copying precut leaves and background for banana"
+  echo "copying example files for train and inference"
   mkdir ../datasets
-  rsync --info=progress2 -r /mnt/gluster/shares/WP2_Analysis/WP2_models/Kimmel/LeafSegmentor_data/dataset/pre_cut/train_leaves ../datasets/.
-  rsync --info=progress2 -r /mnt/gluster/shares/WP2_Analysis/WP2_models/Kimmel/LeafSegmentor_data/dataset/pre_cut/train_backgrounds ../datasets/.
+  rsync --info=progress2 -r /mnt/gluster/shares/WP2_Analysis/WP2_models/Kimmel/LeafSegmentor_data/dataset/examples ../datasets/.
 fi

@@ -3,7 +3,7 @@ import os
 from BaseAnnotationAdapter import BaseAnnotationAdapter
 
 
-class CocoAnnotationAdapter(BaseAnnotationAdapter):
+class CocoAdapter(BaseAnnotationAdapter):
     def __init__(self, coco_file_path, n=None):
         with open(coco_file_path, 'r') as f:
             self.data = json.load(f)
