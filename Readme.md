@@ -46,8 +46,7 @@ This example runs inference on the pictures of dataset task id 129 (pre-download
 
 `--gt AgrinetAdapter` - Specifies that the json files in the inference directory are in the format parsed by the AgrinetAdapter class.
 
-`--task 120` - a required argument by 
-
+`--task 120` - A required argument by 
 `AgrinetAdapter` to correctly parse the .json files.
 
 ### Cut leaves
