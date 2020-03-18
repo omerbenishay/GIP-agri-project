@@ -41,9 +41,14 @@ leafsegmentor infer -m ../models/banana_LS2_2019_11_18.h5 --gt AgrinetAdapter --
 ```
 
 This example runs inference on the pictures of dataset task id 129 (pre-downloaded to directory GT_images_jsons) and also compares the result to the ground truth.
+
 `-m ../models/banana_LS2_2019_11_18.h5` - Specifies a previously trained model
+
 `--gt AgrinetAdapter` - Specifies that the json files in the inference directory are in the format parsed by the AgrinetAdapter class.
-`--task 120` - A required argument by `AgrinetAdapter` to correctly parse the .json files.
+
+`--task 120` - a required argument by 
+
+`AgrinetAdapter` to correctly parse the .json files.
 
 ### Cut leaves
 
@@ -56,14 +61,18 @@ cut -a CocoAdapter -o ../cut_leaves ../cut_jobs/cucumber/annotations.json
 Description of the training concept (BG and leaves etc...)
 
 ### Download training task
-Downloading training tasks in the remote server is fairly simple. 
+Downloading training tasks in the remote server is fairly simple.
 They are located at `/mnt/gluster/catalog/experiment_<NO>/task_<NO>/plot_<NO>`
 Preferably download to a simple relative path from `leafsegmentor` directory
 
+### Cut leaves
+
+Cut the leaves of the required dataset using the correct adapter, to a new directory you will use as your bank of leaves.
 
 #### Customize leaf cutting
-1. bla
-2. bla
+
+You may want to...
+
 ### Train model
 1. bla
 2. bla
@@ -72,38 +81,15 @@ Preferably download to a simple relative path from `leafsegmentor` directory
 
 ### Infer with model
 
-
-<!----- Conversion time: 0.945 seconds.
-
-
-Using this Markdown file:
-
-1. Cut and paste this output into your source file.
-2. See the notes and action items below regarding this conversion run.
-3. Check the rendered output (headings, lists, code blocks, tables) for proper
-   formatting and use a linkchecker before you publish this page.
-
-Conversion notes:
-
-* Docs to Markdown version 1.0β18
-* Sat Mar 07 2020 14:10:08 GMT-0800 (PST)
-* Source doc: https://docs.google.com/open?id=1uvhRShosFWqySOQqXwItVI6SNPeA_l2XltMpL98kqxY
------>
-
-
-
 # leafsegmentor Manual page
-
 
 ## Name
 
 leafsegmentor - the leaf model simple interface
 
-
 ## Synopsis
 
 ```leafsegmentor [--version]  [--help] <command> [<args>]```
-
 
 ## Description
 
@@ -111,43 +97,33 @@ leafsegmentor uses the Tensorflow implementation of Mask-RCNN by MatterPort and 
 
 For information on the different subcommands read the according manual pages
 
-
 ## Options
 
-
 ###### -h
-
 
 ###### --help
 
 Prints the synopsis and the list of possible options and commands.
 
-
 ###### -v
-
 
 ###### --version
 
 Prints the leaf-model command line version
 
-
 ## Subcommands
-
 
 ###### [leafsegmentor-train](#bookmark=kix.d73ecqfzwil1)
 
 Train a model from a dataset
 
-
 ###### [leafsegmentor-infer](#bookmark=id.omgzqarzcj72)
 
 Run inference on a directory of pictures, using a pretrained model
 
-
 ###### [leafsegmentor-cut](#bookmark=id.t0gg9bnl4kan)
 
 Cut leaves from annotated data
-
 
 ###### [leafsegmentor-info](#bookmark=kix.icual4pnf7xg)
 
@@ -164,6 +140,7 @@ leafsegmentor-train - train a model for leaves
 ```leafsegmentor train [-h] [-o <path> | --output=<path>] [-k <value> | --dataset-keep=<value>] [--preview-only] [-e <epochs> | --epochs <epochs>] [-s | --steps-per-epoch] [-l | --layers (all | heads | 3+ | 4+ | 5+)] [-p <pretrained> | --pretrain <pretrained>] <datasetconfigfile>```
 
 ## Description
+
 Creates a dataset of synthetic pictures, and runs the training model on the dataset. The result models are saved as .h5 files.
 
 ## Positional argument
@@ -217,74 +194,57 @@ config example:
 
 The idea is that the configuration is binded to the implementation of the `from_config` methdo. This way you can implement your own dataset and continue using the command line.
 
-
 ## Options
-
 
 ###### -o <path>
 
-
-###### --output=<path>			
+###### --output=<path>
 
 specify path to .h5 model location [default: models]
 
-
 ###### -k <value>
-
 
 ######  --dataset-keep=<value>	
 
 specify how many samples to keep (default 0)
 
-
-###### --preview-only=<number>			
+###### --preview-only=<number>
 
 generate samples of training set without training the model
 
-
 ###### -e <epochs>
-
 
 ###### --epochs <epochs>
 
 number of training epochs
 
-
 ###### -s <steps> 
-
 
 ###### --steps-per-epoch <steps>
 
 number of training steps to perform per epoch
 
-
 ###### -l <{all, heads, 3+, 4+, 5+}>
-
 
 ###### --layers <{all, heads, 3+, 4+, 5+}>
 
 layers of model to train. Other layers will remain unchanged
 
+######  -p \<pretrained>
 
-######  -p <pretrained>
-
-
-###### --pretrain <pretrained> 
+###### --pretrain \<pretrained>
 
 path to a .h5 file with a pretrained model, or just 'COCO' to retrieve the coco pretrain file. [default: COCO]
 
 # leafsegmentor-infer Manual page
 
-
 ## Name
 
 leafsegmentor-infer - leaf inference command
 
-
 ## Synopsis
 
 ```leafsegmentor infer [-h] [-m <model> | --model <model>] [-o <path> | --output <path>]  [--no-pictures] [--no-contours] [--no-masks] [--gt=<adapterClass>] [--task=<task_id>] <picturespath>```
-
 
 ## Description
 
@@ -304,32 +264,25 @@ The path to a directory containing pictures. The command will iterate over all t
 
 ## Options
 
-
 ###### -m <model> 
-
 
 ###### --model <model>
 
-path to .h5 trained model to infer with 
-
+path to .h5 trained model to infer with
 
 ###### -o <path>
 
-
 ###### --output=<path>
 
-Set output directory [default: current] 
-
+Set output directory [default: current]
 
 ###### --no-pictures
 
 Doesn’t output the translucent pictures
 
-
 ###### --no-contours
 
 Doesn’t output the contour file
-
 
 ###### --no-masks
 
@@ -338,9 +291,9 @@ Doesn’t output the mask pictures
 ###### --gt <adapter>
 
 Specify the Name of the module and adapter class. 
-The adapter class is supposed to parse some dataset format, and provide the polygons in a generic format. 
+The adapter class is supposed to parse some dataset format, and provide the polygons in a generic format.
 
-See `BaseAnnotationAdapter` module for more details. 
+See `BaseAnnotationAdapter` module for more details.
 
 ###### --task <taskid>
 
@@ -357,7 +310,6 @@ leafsegmentor-cut - single leaf extractor
 
 ```leafsegmentor cut [-h] [-o <path> | --output <path>] [-l <limit> | --limit <limit>] [-n <width>| --normalize=<width>] [-b | --background=(black | white | original, transparent)] [-a <adapter> | --adapter=<adapter>] [-r | --rotate] <jsonpath>```
 
-
 ## Description
 
 Cut single leaf pictures from an annotated dataset. This step is intended to extract single leaves from annotated datasets, and then use these leaves to train a model. This can also be used to cut leaves from files that went through inference, in order to use the single leaves in other processes.
@@ -369,13 +321,11 @@ A path to a directory or a json file that holds the dataset you want to cut to s
 
 ## Options
 
-
 ###### -o <path>
-
 
 ###### --output=<path>
 
-Set output directory [default: current] 
+Set output directory [default: current]
 
 ###### -l <number>
 
@@ -383,17 +333,13 @@ Set output directory [default: current]
 
 Maximum number of object files to create. Not specifying this argument will result in cutting all the available objects
 
-
 ###### -n <width-size>
-
 
 ###### --normalize=<width-size>
 
 Normalize the generated pictures to the specified width-size. By default pictures are not normalized, every leaf stays at its original size
 
-
 ###### -b ( black | white | original | transparent)
-
 
 ###### --background=( black | white | original | transparent )
 
@@ -404,17 +350,16 @@ Specify the background of the leaf, if a color or original is selected, the obje
 ###### --adapter <adapter>
 
 Specify the Name of the module and adapter class. 
-The adapter class is supposed to parse some dataset format, and provide the polygons in a generic format. 
+The adapter class is supposed to parse some dataset format, and provide the polygons in a generic format.
 
-See `BaseAnnotationAdapter` module for more details. 
+See `BaseAnnotationAdapter` module for more details.
 
-###### -r 
+###### -r
 
 ###### --rotate
 
 Rotate output leaves to match 2 points from annotation
 This works only if the adapter inherits from the `RotatableAdapter` class. See the docstring of the function `get_point` for mor details.
-
 
 # leafsegmentor-info Manual page
 
@@ -422,20 +367,14 @@ This works only if the adapter inherits from the `RotatableAdapter` class. See t
 
 leafsegmentor-info - model metadata extractor
 
-
 ## Synopsis
 
 ```leafsegmentor info <modelpath>```
-
 
 ## Description
 
 Prints information about the model saved in the model-info variable
 
-
 ## Options
 
 None
-
-
-<!-- Docs to Markdown version 1.0β18 -->
