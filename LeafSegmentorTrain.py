@@ -17,7 +17,6 @@ def train(args):
     # Retrieve arguments
     output = args.output
     samples_number = args.dataset_keep
-    # test_set = args.test_set
     preview_only = args.preview_only
     dataset_config_path = args.dataset_config_file
     epochs = args.epochs
