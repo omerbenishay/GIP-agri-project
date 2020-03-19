@@ -4,6 +4,7 @@ from Config import LeafSegmentorConfig
 from mrcnn import visualize
 from skimage import measure
 from matplotlib import cm
+import matplotlib as plt
 from pydoc import locate
 from tqdm import tqdm
 from PIL import Image
@@ -63,8 +64,9 @@ def infer(args):
 
         if do_pictures:
             output_file_path = os.path.join(output_dir, image_name)
+            _, ax = plt.subplots(1, figsize=(16,16))
             visualize.save_instances(image, r['rois'], r['masks'], r['class_ids'],
-                                     ['BG', 'leave'], r['scores'], save_to=output_file_path,)
+                                     ['BG', 'leave'], r['scores'], save_to=output_file_path, ax=ax)
 
         if do_contours:
             inference_dict[image_path], txt_contours = get_contours(r)

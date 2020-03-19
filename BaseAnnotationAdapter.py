@@ -3,7 +3,6 @@ class BaseAnnotationAdapter(object):
     def __iter__(self):
         return self
 
-    
     def __next__(self):
         """
         Needs to be implemented in order to iterate through the annotations
@@ -17,6 +16,9 @@ class BaseAnnotationAdapter(object):
 
 
 class RotatableAdapter(BaseAnnotationAdapter):
+    def __next__(self):
+        raise NotImplementedError()
+
     def get_point(self, index):
         """
         Get the points of a leaf if they exist in the annotation file
