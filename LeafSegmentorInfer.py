@@ -1,10 +1,10 @@
 from LeafSegmentorUtils import prompt_model
 from pycocotools import mask as mask_tools
 from Config import LeafSegmentorConfig
+import matplotlib.pyplot as plt
 from mrcnn import visualize
 from skimage import measure
 from matplotlib import cm
-import matplotlib as plt
 from pydoc import locate
 from tqdm import tqdm
 from PIL import Image
