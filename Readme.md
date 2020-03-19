@@ -3,7 +3,7 @@
 1. Connect to the agrinet remote server with your credentials
 2. Clone the repository ```git clone https://github.com/simonlousky/model-leaf.git leafsegmentor```
 3. Enter the directory with `cd leafsegmentor`
-4. Run setup `bash setup.sh` and follow the miniconda install instructions with default values
+4. Run setup `bash setup.sh` and follow the miniconda install instructions with default values if needed.
     * This may take a while, go make yourself a coffee
   
 The install will create a directory leafsegmentor. All relative paths should be from this directory.
@@ -25,7 +25,71 @@ For further info continue reading here or refer to the `--help` of every sub com
 
 ### Command examples
 
-#### Training example with pre-cut banana leaves
+## A to Z work flow
+
+Every subcommand has a purpose on its own but the tools are originally made to provide an entire package to train and export leaves.
+
+### Download training task
+
+Downloading training tasks in the remote server is fairly simple.
+They are located at `/mnt/gluster/catalog/experiment_<NO>/task_<NO>/plot_<NO>`
+Preferably download to a simple relative path from `leafsegmentor` directory
+
+### Cut leaves
+
+Cut the leaves of the required dataset using the correct adapter, to a new directory you will use as your bank of leaves.
+The output should be a directory containing only single leaf pictures.
+
+#### Example - Cut leaves
+
+```bash
+leafsegmentor cut -a CocoAdapter -o ../cut_leaves ../cut_jobs/cucumber/annotations.json
+```
+
+This example will cut single leaves from the cucumber dataset located in `.../cut_jobs/cucumber`.
+
+`-a CocoAdapter` - The dataset is saved in the COCO format. This adapter looks for categoy 'leaf' in the .json file and parses all the corresponding objects.
+
+`-o ../cut_leaves` - The output directory to store the resulting files.
+
+#### Customize leaf cutting
+
+As mentioned in the cut manual (further down) - You can change the way the dataset provided to the command is parsed and so adapt to changes between different task id's or even use an external dataset you've aquired.
+
+In order to do that you need to implement a class that implementes the `BaseAnnotationAdapter` interface.
+
+The class should respect the following rules:
+
+1. A constructor with parameters:
+   1. `annotation_path` - A path a .json file or a directory you want to parse.
+   2. `task_id` - In case you want to provide the `--task` option to the cut command, and use it for parsing the dataset.
+   3. `n=None` - Should limit the number of parsed objects.
+2. It should be Iterable
+   1. The method `__next__` should be implemented, and return an object.
+   2. The object needs to be a tuple `(leaf_annotation, image_path, i)`
+      1. `leaf_annotation` - A list of the form `[x,y,x,y...]`. Pay attention that this should not support multiple polygons per object since you only want to cut complete leaves.
+      2. `image_path` - The absolute or relative path to the image file the coordinates correspond to.
+      3. `i` - An index used used to name the output leaves.
+
+##### Rotatable Adapter
+
+If you also want the command to align your output leaves, for example you want the leave's tip at the bottom, and you have the required info in the dataset. You can implement the `RotatableAdapter`.
+
+Rules:
+
+1. Implement exactly the same as `BaseAnnotationAdapter`.
+2. Implement the `get_point` method. This method should receive has input an index, and will return a tuple `([x,y],[x,y])` with two points that the object can be align with.
+
+### Train model
+
+For training with the provided `LeafDataset` you need to have two directories:
+
+1. A leaf directory with single leaves with transparent backgrounds.
+2. A background directory that contains backgrounds you wish for the model to train with. These will be selected randomly as background for training images.
+
+The `LeafDataset` supports multiple modes, more details are to be found in the train manual (further down)
+
+#### Example - Training with pre-cut banana leaves
 
 ```bash
 leafsegmentor train dataset_config.json
@@ -34,7 +98,37 @@ leafsegmentor train dataset_config.json
 Train a new model from scratch (From COCO) using the dataset configuration in `dataset_config.json`
 The content of the configuration file is explained in the train manual (furthur down)
 
-#### Inference and compare with ground truth
+#### Work with difference datasets
+
+You can use the provided `LeafDataset` that supports some configurations that work fine with young banana plant and young corn plants, but you can implement a custom dataset yourself if you like. The dataset should be usable by Matterport/MaskRCNN model. Follow [this post](https://towardsdatascience.com/object-detection-using-mask-r-cnn-on-a-custom-dataset-4f79ab692f6d) (especially step 6) for more info about that.
+
+The additional thing you need to do is implement the method `from_config` that should receive:
+
+1. `config_dict` - A configuration dictionary whatever you want your instance to receive upon creation.
+2. `width` and `height` - Specify the size of the pictures
+
+And should return an instance of `utils.Dataset`
+
+Also you will need to provide a `.json` file with the following structure:
+
+```json
+{
+    "dataset_module": "MyDataset",
+    "dataset_class": "MyDataset",
+    "config": {
+        "arg1": "value",
+        "args2": "value",
+    }
+}
+```
+
+* Pay attention that the dictionary inside "config" is exactly the dictionary your class will receive in `from_config`
+
+### Infer with an existing model
+
+Now it's money time, you have trained your model and got .h5 files generated by the training. You can use these weights to run inference on non annotated pictures!
+
+#### Example - Inference and compare with ground truth
 
 ```bash
 leafsegmentor infer -m ../models/banana_LS2_2019_11_18.h5 --gt AgrinetAdapter --task 129 ../GT_images_jsons
@@ -48,37 +142,6 @@ This example runs inference on the pictures of dataset task id 129 (pre-download
 
 `--task 120` - A required argument by 
 `AgrinetAdapter` to correctly parse the .json files.
-
-### Cut leaves
-
-```bash
-cut -a CocoAdapter -o ../cut_leaves ../cut_jobs/cucumber/annotations.json
-```
-
-## A to Z work flow
-
-Description of the training concept (BG and leaves etc...)
-
-### Download training task
-Downloading training tasks in the remote server is fairly simple.
-They are located at `/mnt/gluster/catalog/experiment_<NO>/task_<NO>/plot_<NO>`
-Preferably download to a simple relative path from `leafsegmentor` directory
-
-### Cut leaves
-
-Cut the leaves of the required dataset using the correct adapter, to a new directory you will use as your bank of leaves.
-
-#### Customize leaf cutting
-
-You may want to...
-
-### Train model
-1. bla
-2. bla
-#### Customize training and config
-#### Work with difference datasets
-
-### Infer with model
 
 # leafsegmentor Manual page
 
@@ -145,7 +208,7 @@ Creates a dataset of synthetic pictures, and runs the training model on the data
 ## Positional argument
 
 *\<datasetconfigfile\>*
-This is the json file specifying the configuration of the training datatset. 
+This is the json file specifying the configuration of the training datatset.
 
 config example:
 

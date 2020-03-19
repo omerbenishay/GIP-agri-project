@@ -19,9 +19,9 @@ class BaseAnnotationAdapter(object):
 class RotatableAdapter(BaseAnnotationAdapter):
     def get_point(self, index):
         """
-        Get the points of a leaf if it exists in the annotation file
+        Get the points of a leaf if they exist in the annotation file
         :param index:   Index passed with the leaf annotation by the collection
-        :return:        an array [x, y] with the location of the point if it exists
-                        if points doesn't exists, returns None
+        :return:        A tuple of arrays ([x, y],[x,y]) with the location of the points if they exist
+                        if points doesn't exists for this leaf, returns None
         """
         raise NotImplementedError()
