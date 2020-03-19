@@ -23,8 +23,6 @@ then you will need to run ```. ~/.bash_profile``` at the beginning of each sessi
 You should see the command help doc.
 For further info continue reading here or refer to the `--help` of every sub command
 
-### Command examples
-
 ## A to Z work flow
 
 Every subcommand has a purpose on its own but the tools are originally made to provide an entire package to train and export leaves.
@@ -92,11 +90,17 @@ The `LeafDataset` supports multiple modes, more details are to be found in the t
 #### Example - Training with pre-cut banana leaves
 
 ```bash
-leafsegmentor train dataset_config.json
+leafsegmentor train -e 2 -s 50 -k 10 dataset_config.json
 ```
 
 Train a new model from scratch (From COCO) using the dataset configuration in `dataset_config.json`
-The content of the configuration file is explained in the train manual (furthur down)
+The content of the configuration file is explained in the train manual
+
+`-e 2 -s 50` - Run 2 epochs, 50 steps each epoch
+
+`-k 10` - Keep 10 train samples to see pictures the model trained on
+
+* More details on the options in the train manual (further down)
 
 #### Work with difference datasets
 

@@ -47,10 +47,10 @@ def image_to_mask(image):
 
 def mask_to_image(mask):
     x, y, z = mask.shape
-    image = np.zeros((x, y))
+    image = np.zeros((x, y), dtype=np.uint8)
     for i in range(0, z):
-        image += mask[:, :, i] * (i + 1)
-    print(z)
+        mask_color = int(((i + 1) / z) * 255)
+        image += mask[:, :, i] * np.cast[np.uint8](mask_color)
     return image
 
 def add_image_without_transparency(img1, img2, x_center, y_center, x_scale, y_scale, angle):
