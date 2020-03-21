@@ -1,10 +1,10 @@
 import numpy as np
 import json
 import os
-from BaseAnnotationAdapter import BaseAnnotationAdapter
+from BaseAnnotationAdapter import RotatableAdapter
 
 
-class AgrinetAdapter2(BaseAnnotationAdapter):
+class AgrinetAdapterRotate(RotatableAdapter):
     IMAGE_FORMATS = ['jpg', 'jpeg', 'png', 'bmp']
 
     # ID's of relevant dictionary records from Phenomics dictionary
@@ -190,8 +190,3 @@ class AgrinetAdapter2(BaseAnnotationAdapter):
                     i is a running index used for example to name the leaf picture
         """
         return next(self.generator)
-
-# if __name__ == "__main__":
-#     b = BananaAnnotationAdapter('/home/nomios/Documents/Projects/model-cmd/Phenomics_tst/tmp/task_30', 2)
-#     for image_data in b:
-#         print(image_data)
