@@ -4,14 +4,13 @@ import os
 from BaseAnnotationAdapter import BaseAnnotationAdapter
 
 
-class AgrinetAdapter(BaseAnnotationAdapter):
-
+class AgrinetAdapter2(BaseAnnotationAdapter):
     IMAGE_FORMATS = ['jpg', 'jpeg', 'png', 'bmp']
 
     # ID's of relevant dictionary records from Phenomics dictionary
     # dictionary records [1967 .. 1976] correspond to group [1st .. 10th]
     # dictionary records [2044 .. 2063] correspond to group [11th .. 30th]
-    DIC_GROUP_IDS = [i for i in range(1967,1977)] + [i for i in range(2044,2064)]
+    DIC_GROUP_IDS = [i for i in range(1967, 1977)] + [i for i in range(2044, 2064)]
     # minimum number of points per polygon
     MIN_POLYGON_POINTS = 3
     # maximum number of leaves per plant
@@ -19,48 +18,66 @@ class AgrinetAdapter(BaseAnnotationAdapter):
     # start/end points of a leaf
     DIC_POSITION_START = 1962
     DIC_POSITION_END = 1963
-    DIC_POSITION_UPPER = 1964   # same as DIC_POSITION_END
-    DIC_POSITION_LOWER = 1966   # same as DIC_POSITION_START
-    DIC_POSITION_BASAL = 1993   # same as DIC_POSITION_START
+    DIC_POSITION_UPPER = 1964  # same as DIC_POSITION_END
+    DIC_POSITION_LOWER = 1966  # same as DIC_POSITION_START
+    DIC_POSITION_BASAL = 1993  # same as DIC_POSITION_START
+    TASK_IDS = [103, 105, 107, 171]
+    POINT1_INDEX = 2
+    POINT2_INDEX = 3
 
     def __init__(self, annotation_path, task_id, n=None):
 
         self.task_id = int(task_id)
-        annotation_file_paths = [annotation_path]
-        self.dir_path = os.path.dirname(annotation_path)
-        if os.path.isdir(annotation_path):
-            annotation_file_paths = [os.path.join(annotation_path, file_name) for file_name in
-                                     os.listdir(annotation_path) if file_name.endswith(".json")]
-            self.dir_path = annotation_path
-
-        self.data = {}
-        for file_path in annotation_file_paths:
-            with open(file_path, 'r') as f:
-                self.data.update(json.load(f))
+        self.dir_path = annotation_path
         self.n = n
-        self.annotations = {}
-        self.index_to_leaf_key_lut = []
+
+        self.pictures_list = self.list_all_pictures()
+        self.annotation_dictionary = self.retrieve_annotation_data()
+        self.leaf_annotations = self._parse_all_annotations()
+        self.generator = self._generator()
 
     def get_point(self, index):
         """
         Get the points of a leaf if it exists in the annotation file
         :param index:   Index passed with the leaf annotation by the collection
-        :return:        an array [x, y] with the location of the point if it exists
+        :return:        an array [[x, y], [x,y]] with the location of the points if they exists
                         if points doesn't exists, returns None
         """
-        return self.annotations[self.index_to_leaf_key_lut[index]].get("point", None)
+        point1 = self.leaf_annotations[index][self.POINT1_INDEX]
+        point2 = self.leaf_annotations[index][self.POINT2_INDEX]
+        return [list(point1), list(point2)]
 
-    def _get_image_path(self, image_id):
-        file_list = os.listdir(self.dir_path)
-        match = [file_name for file_name in file_list if file_name.startswith(str(image_id))
-                 and file_name.split(".")[-1].lower() in self.IMAGE_FORMATS]
+    def list_all_pictures(self):
+        def _is_picture(file_name):
+            return file_name.split(".")[-1] in self.IMAGE_FORMATS
 
-        if len(match) != 0:
-            return match[0]
+        return [os.path.join(self.dir_path, file_name) for file_name in
+                os.listdir(self.dir_path) if _is_picture(file_name)]
 
-        return None
+    def retrieve_annotation_data(self):
+        annotation_dict = {}
+        annotation_file_paths = [os.path.join(self.dir_path, file_name) for file_name in
+                                 os.listdir(self.dir_path) if file_name.endswith(".json")]
+        for picture_path in self.pictures_list:
+            path_without_extension = os.path.splitext(picture_path)[0]
+            try:
+                annotation_file_name = next(file for file in annotation_file_paths if path_without_extension in file)
+            except StopIteration as e:
+                print("Picture in directory without annotation, skipping...")
+                continue
+            with open(annotation_file_name) as f:
+                annotation_dict[picture_path] = json.load(f)
 
-    def parse_json_task(self, json_data, task_ids):
+        return annotation_dict
+
+    def _parse_all_annotations(self):
+        parsed_annotations = []
+        for pict_path, annotation in self.annotation_dictionary.items():
+            parsed_annotations.extend(self.parse_json_task(annotation, pict_path))
+
+        return parsed_annotations
+
+    def parse_json_task(self, json_data, image_path):
         # read relevant info from json data
         #   type: polygon/point
         #   dictionary records: leaf ordinality (1st, 2nd, 3rd, ...) and start/end point of leaf
@@ -80,11 +97,11 @@ class AgrinetAdapter(BaseAnnotationAdapter):
             if is_deleted != 0:
                 # discard this annotation if it was deleted
                 continue
-            if not (ann_task_id in task_ids):
+            if not (ann_task_id in self.TASK_IDS):
                 # discard this annotation if it doesn't belong to the scecified task Id's
                 continue
             ann_type = curr.get('annotation_type')
-            if not(ann_type == 'polygon' or ann_type == 'point'):
+            if not (ann_type == 'polygon' or ann_type == 'point'):
                 # discard this annotation if it is not listed as a point or poygon
                 continue
             dic_records = curr.get('annotation_dictionary_records')
@@ -128,10 +145,10 @@ class AgrinetAdapter(BaseAnnotationAdapter):
             for j in range(self.MAX_LEAVES_PER_PLANT):
                 g_ID = self.DIC_GROUP_IDS[j]
                 if g_ID in curr_record:
-                    if g_ID in range(1967,1977):
+                    if g_ID in range(1967, 1977):
                         # 1st to 10th leaf (according to dictionary records)
                         groupID = g_ID - 1966
-                    elif g_ID in range(2044,2064):
+                    elif g_ID in range(2044, 2064):
                         # 11th to 30th leaf (according to dictionary records)
                         groupID = g_ID - 2033
                     break
@@ -150,11 +167,18 @@ class AgrinetAdapter(BaseAnnotationAdapter):
 
         for i in range(self.MAX_LEAVES_PER_PLANT):
             # save leaf info if it contains polygon and two extreme points
-            if not(type(points1[i]) is str) and not(type(points2[i]) is str) and not(type(polygons[i]) is str):
-                new_element = {'polygon': polygons[i], 'p1': points1[i], 'p2': points2[i], 'leafID': (i+1)}
-                leaf_info.append(new_element)
+            if not (type(points1[i]) is str) and not (type(points2[i]) is str) and not (type(polygons[i]) is str):
+                # leaf_polygon_coords = [[ann['x'], ann['y']] for ann in polygons[i]]
+                leaf_polygon = polygons[i].reshape((-1,)).tolist()
+                leaf_tuple = (leaf_polygon, image_path, points1[i], points2[i])
+                # new_element = {'polygon': polygons[i], 'p1': points1[i], 'p2': points2[i], 'leafID': (i + 1)}
+                leaf_info.append(leaf_tuple)
 
         return leaf_info
+
+    def _generator(self):
+        for i, leaf_annotation in enumerate(self.leaf_annotations):
+            yield (*leaf_annotation[:2], i)
 
     def __next__(self):
         """
@@ -166,7 +190,6 @@ class AgrinetAdapter(BaseAnnotationAdapter):
                     i is a running index used for example to name the leaf picture
         """
         return next(self.generator)
-
 
 # if __name__ == "__main__":
 #     b = BananaAnnotationAdapter('/home/nomios/Documents/Projects/model-cmd/Phenomics_tst/tmp/task_30', 2)

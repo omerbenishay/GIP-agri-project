@@ -36,7 +36,6 @@ def cut(args):
         jobs = adapter_class(annotation_path, limit)
 
     jobs_for_pool = []
-    jobs_for_pool = []
     for leaf_annotation, image_path, i in jobs:
         job_pipe = [(image_from_annotation, (leaf_annotation, image_path))]
         if width is not None:
@@ -169,15 +168,15 @@ def rotate_image(image, points):
     if points is None or len(points) < 2:
         return image
 
-    top_x = points[-2][0]
-    top_y = points[-2][1]
-    bottom_x = points[-1][0]
-    bottom_y = points[-1][1]
+    top_x = points[0][0]
+    top_y = points[0][1]
+    bottom_x = points[1][0]
+    bottom_y = points[1][1]
 
     delta_x = bottom_x - top_x
     delta_y = bottom_y - top_y
 
-    angle_to_rotate_clockwise = np.degrees(np.arctan2([delta_x], [delta_y]))[0]
+    angle_to_rotate_clockwise = np.degrees(np.arctan2([delta_x], [-delta_y]))[0]
     rotated_image = image.rotate(angle_to_rotate_clockwise, expand=True)
 
     return rotated_image

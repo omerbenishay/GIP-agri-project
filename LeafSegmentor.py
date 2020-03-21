@@ -44,7 +44,7 @@ def main():
     # parser for cut
     parser_cut = subparsers.add_parser('cut', help=HelpReference.CutReference.description)
     parser_cut.set_defaults(func=cut)
-    parser_cut.add_argument('-o', '--output', type=str, help=HelpReference.CutReference.output)
+    parser_cut.add_argument('-o', '--output', type=str, help=HelpReference.CutReference.output, default='cut_output')
     parser_cut.add_argument('-l', '--limit', type=int, help=HelpReference.CutReference.limit)
     parser_cut.add_argument('-n', '--normalize', type=int, help=HelpReference.CutReference.normalize)
     parser_cut.add_argument('-b', '--background', choices=['black', 'white', 'original', 'transparent'],
