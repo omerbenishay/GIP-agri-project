@@ -444,3 +444,33 @@ Prints information about the model saved in the model-info variable
 ## Options
 
 None
+
+# leafsegmentor-download Manual page
+
+## Name
+
+leafsegmentor-download
+
+## Synopsis
+
+```leafsegmentor download <taskid> <location>```
+
+## Description
+
+Download a task id directory from the Agrinet data bases 
+
+\*This command works only on Agrinet server.
+
+## Positional argument
+
+*\<taskid\>*
+
+The task id number
+
+*\<location>* (Default: 'downloads')
+
+The location to put the downloaded files
+
+## Options
+
+None
