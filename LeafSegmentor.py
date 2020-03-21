@@ -1,9 +1,10 @@
-import argparse
-from LeafSegmentorInfer import infer
+from LeafSegmentorDownload import download
 from LeafSegmentorTrain import train
-from LeafSegmentorCut import cut
-from LeafSegmentorInfo import info
+from LeafSegmentorInfer import infer
 from Reference import HelpReference
+from LeafSegmentorInfo import info
+from LeafSegmentorCut import cut
+import argparse
 
 
 def main():
@@ -56,8 +57,14 @@ def main():
 
     # parser for info
     parser_info = subparsers.add_parser('info', help=HelpReference.InfoReference.description)
-    parser_info.add_argument('model_path', help=HelpReference.InfoReference.model_path, default='models')
     parser_info.set_defaults(func=info)
+    parser_info.add_argument('model_path', help=HelpReference.InfoReference.model_path, default='models')
+
+    # parser for download
+    parser_download = subparsers.add_parser('download', help=HelpReference.DownloadReference.description)
+    parser_download.add_argument('task_id', help=HelpReference.DownloadReference.task_id)
+    parser_download.add_argument('location', nargs='?', help=HelpReference.DownloadReference.location, default='downloads')
+    parser_download.set_defaults(func=download)
 
     args = parser.parse_args()
     args.func(args)

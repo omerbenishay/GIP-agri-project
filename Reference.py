@@ -52,3 +52,8 @@ class HelpReference:
     class InfoReference:
         description = "Prints information about the model saved in the model-info variable"
         model_path = "Path to a .h5 trained model file"
+
+    class DownloadReference:
+        description = "Download specific task id to local directory"
+        task_id = "Task id number e.g: 103"
+        location = "Location to save the files"
