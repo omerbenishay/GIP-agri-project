@@ -18,23 +18,6 @@ fi
 # Create leafsegmentor conda environment
 if [[ "$(conda env list | grep $ENV_NAME | awk '{print $1}')" != $ENV_NAME ]] ; then
   conda env create --name $ENV_NAME -v -f environment.yml;
-  echo "alias leafsegmentor='conda deactivate && conda activate $ENV_NAME && python LeafSegmentor.py'" >> ~/.bash_profile
+  echo "alias leafsegmentor='conda deactivate && conda activate $ENV_NAME && srun python LeafSegmentor.py'" >> ~/.bash_profile
   . ~/.bash_profile
-fi
-
-# Copy example files to user directory
-if [[ ! -d ../models ]]; then
-  echo "copying model files..."
-  rsync --info=progress2 -r /mnt/gluster/shares/WP2_Analysis/WP2_models/Kimmel/LeafSegmentor_data/models ..
-fi
-
-if [[ ! -d ../cut_jobs ]]; then
-  echo "copying example cut jobs..."
-  rsync --info=progress2 -r /mnt/gluster/shares/WP2_Analysis/WP2_models/Kimmel/LeafSegmentor_data/cut_jobs ..
-fi
-
-if [[ ! -d ../datasets ]]; then
-  echo "copying example files for train and inference"
-  mkdir ../datasets
-  rsync --info=progress2 -r /mnt/gluster/shares/WP2_Analysis/WP2_models/Kimmel/LeafSegmentor_data/dataset/examples ../datasets/.
 fi

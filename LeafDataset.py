@@ -198,7 +198,12 @@ class LeafDataset(utils.Dataset):
 
         for shape, location, scale, angle, index in info['shapes']:
             image = self.draw_leaf(image, shape, location, scale, angle, index)
-        return np.array(image)
+        image = np.array(image)
+        # If has an alpha channel, remove it for consistency
+        if image.shape[-1] == 4:
+            image = image[..., :3]  
+            
+        return image
 
     def draw_leaf(self, image, shape, location, scale, angle, index):
         if shape == 'leaf':

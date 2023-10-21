@@ -1,0 +1,36 @@
+{
+    "dataset_module": "LeafDataset",
+    "dataset_class": "LeafDataset",
+    "config": {
+        "train":{
+            "folder_objects": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/06 - Leaves/A1_org",
+            "folder_bgs": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/03 - Clean_Backgrounds/A1",
+            "min_leaf": 4,
+            "max_leaf": 10,
+            "min_plants": 1,
+            "max_plants": 1,
+            "leaf_angle_offset": 70,
+            "leaf_position_offset": 20,
+            "min_scale": 0.8,
+            "max_scale": 2.0,
+            "image_size": 500,
+            "number_of_images": 20000,
+            "centered_leaves": true
+        },
+        "valid":{
+            "folder_objects": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/06 - Leaves/A1_org",
+            "folder_bgs": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/03 - Clean_Backgrounds/A1",
+            "min_leaf": 4,
+            "max_leaf": 10,
+            "min_plants": 1,
+            "max_plants": 1,
+            "leaf_angle_offset": 70,
+            "leaf_position_offset": 20,
+            "min_scale": 0.8,
+            "max_scale": 2.0,
+            "image_size": 500,
+            "number_of_images": 2000,
+            "centered_leaves": true
+        }
+    }
+}
