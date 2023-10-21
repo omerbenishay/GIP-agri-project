@@ -56,14 +56,18 @@ def infer(args):
     IoU_dict = {}
     for image_path in tqdm(images):
         inference_dict[image_path] = []
+        dir_name = image_path.split(os.path.sep)[-2]
         image_name = os.path.basename(image_path)
         image = np.array(Image.open(image_path))
+        # If has an alpha channel, remove it for consistency
+        if image.shape[-1] == 4:
+            image = image[..., :3]  
         r = model.detect([image])[0]
         if should_save_masks:
-            save_masks(r['masks'], output_dir, image_name)
+            save_masks(r['masks'], os.path.join(output_dir, dir_name) , image_name)
 
         if do_pictures:
-            output_file_path = os.path.join(output_dir, image_name)
+            output_file_path = os.path.join(output_dir, dir_name, image_name)
             _, ax = plt.subplots(1, figsize=(16,16))
             visualize.save_instances(image, r['rois'], r['masks'], r['class_ids'],
                                      ['BG', 'leave'], r['scores'], save_to=output_file_path, ax=ax)
@@ -99,13 +103,16 @@ def save_masks(masks, output_dir, image_name):
         mask = masks[..., i]
         image += mask.astype('uint8') * (i + 1)
 
-    my_cm = cm.get_cmap(COLOR_MAP, masks_shape[-1] + 1)
-    my_cm.set_bad(color='black')
-    image = np.ma.masked_where(image == 0, image)
-    image = np.uint8(my_cm(image) * 255)
+    #my_cm = cm.get_cmap(COLOR_MAP, masks_shape[-1] + 1)
+    #my_cm.set_bad(color='black')
+    #image = np.ma.masked_where(image == 0, image)
+    #image = np.uint8(my_cm(image) * 255)
+    if image.ndim == 3:
+        image = image[:, :, 0]
     mask_image_name = ".".join(image_name.split('.')[:-1]) + "_mask.png"
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
     Image.fromarray(image).save(os.path.join(output_dir, mask_image_name))
-
 
 def get_contours(r):
     contours = {}

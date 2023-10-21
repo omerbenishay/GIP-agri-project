@@ -3,7 +3,7 @@
     "dataset_class": "LeafDataset",
     "config": {
         "train":{
-            "folder_objects": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/06 - Leaves/A1_org",
+            "folder_objects": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/06 - Leaves/A1_clean",
             "folder_bgs": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/03 - Clean_Backgrounds/A1",
             "min_leaf": 4,
             "max_leaf": 10,
@@ -18,7 +18,7 @@
             "centered_leaves": true
         },
         "valid":{
-            "folder_objects": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/06 - Leaves/A1_org",
+            "folder_objects": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/06 - Leaves/A1_clean",
             "folder_bgs": "./datasets/LSC_leaves/LSC_leaves_backgrounds_misc_data/03 - Clean_Backgrounds/A1",
             "min_leaf": 4,
             "max_leaf": 10,
